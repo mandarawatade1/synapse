@@ -52,7 +52,6 @@ const Sidebar = () => {
 
   const navItems = [
     { path: '/dashboard', icon: Layout, label: 'Dashboard' },
-    { path: '/internships', icon: Briefcase, label: 'Opportunities' },
     { path: '/advisor', icon: MessageSquare, label: 'Study Buddy' },
     { path: '/planner', icon: Settings, label: 'Exam Prep' },
     { path: '/roadmap', icon: Map, label: 'Skill Roadmap' },
