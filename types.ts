@@ -219,3 +219,23 @@ export interface SavedTranscript {
   actionItems: string[];
   createdAt: string;
 }
+
+// ── Interview Prep ──
+export interface InterviewQuestion {
+  id: string;
+  question: string;
+  category: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  expectedAnswer: string;
+  tips: string[];
+}
+
+export interface InterviewSession {
+  id: string;
+  role: string;
+  difficulty: string;
+  questions: InterviewQuestion[];
+  responses: { questionId: string; response: string; feedback: string; score: number }[];
+  overallScore: number;
+  createdAt: string;
+}

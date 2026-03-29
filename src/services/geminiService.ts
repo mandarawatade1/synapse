@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { RoadmapData, PrepPlan, UserProfile, ATSAnalysis, ChatMessage, QuizQuestion, SubjectScore } from "../../types";
+import { RoadmapData, PrepPlan, UserProfile, ATSAnalysis, ChatMessage, QuizQuestion, SubjectScore, InterviewQuestion } from "../../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -633,4 +633,73 @@ Ensure the times are strictly formatted as HH:mm (e.g., "09:00", "14:30").`;
   });
 
   return JSON.parse(response.text || '{}');
+};
+
+export const generateInterviewQuestions = async (
+  role: string,
+  difficulty: string,
+  count: number
+): Promise<InterviewQuestion[]> => {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `You are an expert interviewer for ${role} positions. Generate ${count} interview questions for a ${difficulty} level candidate.
+
+    OUTPUT FORMAT (STRICT — JSON ONLY):
+    [
+      {
+        "id": "q1",
+        "question": "Tell me about yourself.",
+        "category": "Behavioral",
+        "difficulty": "Easy",
+        "expectedAnswer": "Brief overview of background, experience, and goals.",
+        "tips": ["Keep it under 2 minutes", "Focus on relevant experience"]
+      }
+    ]
+
+    Categories: Technical, Behavioral, Situational, Problem-solving, Company-specific.
+    Ensure questions are realistic and cover key aspects of the role.`,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            id: { type: Type.STRING },
+            question: { type: Type.STRING },
+            category: { type: Type.STRING },
+            difficulty: { type: Type.STRING, enum: ["Easy", "Medium", "Hard"] },
+            expectedAnswer: { type: Type.STRING },
+            tips: { type: Type.ARRAY, items: { type: Type.STRING } }
+          }
+        }
+      }
+    }
+  });
+
+  return JSON.parse(response.text || '[]');
+};
+
+export const analyzeInterviewResponse = async (
+  question: string,
+  response: string,
+  expectedAnswer: string
+): Promise<{ feedback: string; score: number }> => {
+  const prompt = `Analyze this interview response:
+
+Question: ${question}
+Candidate Response: ${response}
+Expected Answer: ${expectedAnswer}
+
+Provide feedback and a score out of 10. Be constructive.
+
+Output JSON: { "feedback": "Detailed feedback...", "score": 7 }`;
+
+  const aiResponse = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: prompt,
+    config: { responseMimeType: "application/json" }
+  });
+
+  return JSON.parse(aiResponse.text || '{"feedback": "Unable to analyze", "score": 5}');
 };

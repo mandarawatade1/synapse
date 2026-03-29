@@ -19,7 +19,7 @@ export const db = getFirestore(app);
 
 // Firestore Helpers
 import { doc, getDoc, setDoc, updateDoc, collection, getDocs, deleteDoc, query, orderBy, addDoc } from "firebase/firestore";
-import { UserProfile, QuestProgress, QuizSession, PerformanceReport, SavedNote, SavedTranscript } from "../../types";
+import { UserProfile, QuestProgress, QuizSession, PerformanceReport, SavedNote, SavedTranscript, InterviewSession } from "../../types";
 
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
   const docRef = doc(db, "users", userId);
@@ -86,4 +86,13 @@ export const getTranscripts = async (userId: string): Promise<SavedTranscript[]>
 
 export const deleteTranscript = async (userId: string, transcriptId: string) => {
   await deleteDoc(doc(db, "transcripts", userId, "items", transcriptId));
+};
+
+export const saveInterviewSession = async (userId: string, session: InterviewSession) => {
+  await setDoc(doc(db, "interviewSessions", userId, "items", session.id), session);
+};
+
+export const getInterviewHistory = async (userId: string): Promise<InterviewSession[]> => {
+  const snap = await getDocs(collection(db, "interviewSessions", userId, "items"));
+  return snap.docs.map(d => d.data() as InterviewSession).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
