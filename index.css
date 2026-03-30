@@ -100,3 +100,109 @@ body {
   --tw-prose-links: #a78bfa;
   --tw-prose-bold: #fff;
 }
+
+/* ── AI Badge Glow ── */
+.ai-badge-glow {
+  background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(139,92,246,0.08) 100%);
+  border: 1px solid rgba(139,92,246,0.2);
+  animation: badge-pulse 3s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-badge-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 30% 50%, rgba(139,92,246,0.2), transparent 70%);
+  animation: badge-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px 0px rgba(124,58,237,0.15), inset 0 0 8px rgba(139,92,246,0.05);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px rgba(124,58,237,0.25), inset 0 0 12px rgba(139,92,246,0.1);
+  }
+}
+
+@keyframes badge-shimmer {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.ai-badge-sparkle {
+  animation: sparkle-rotate 4s ease-in-out infinite;
+}
+
+@keyframes sparkle-rotate {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 0 2px rgba(167,139,250,0.4));
+  }
+  25% {
+    transform: rotate(15deg) scale(1.15);
+    filter: drop-shadow(0 0 6px rgba(167,139,250,0.7));
+  }
+  50% {
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 0 2px rgba(167,139,250,0.4));
+  }
+  75% {
+    transform: rotate(-10deg) scale(1.1);
+    filter: drop-shadow(0 0 5px rgba(167,139,250,0.6));
+  }
+}
+
+/* ── Chat Page Styles ── */
+
+/* Subtle dot grid background */
+.chat-bg-pattern {
+  background-image: radial-gradient(circle, rgba(139,92,246,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* AI message bubble — purple-tinted for better contrast */
+.chat-ai-bubble {
+  background: linear-gradient(135deg, rgba(30,27,50,1) 0%, rgba(20,18,40,1) 100%);
+  border: 1px solid rgba(139,92,246,0.12);
+  color: #e2e0ea;
+}
+
+/* Glow ring around AI avatar */
+.ai-avatar-ring {
+  box-shadow: 0 0 0 2px rgba(139,92,246,0.25), 0 0 12px rgba(139,92,246,0.15);
+}
+
+/* Glassmorphic chat header */
+.chat-header-glass {
+  background: rgba(2,6,23,0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(139,92,246,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+/* Typing indicator dots */
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(167,139,250,0.6);
+  animation: typing-bounce 1.2s ease-in-out infinite;
+}
+
+@keyframes typing-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+

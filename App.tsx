@@ -54,25 +54,47 @@ const Sidebar = () => {
   const { isCollapsed, toggleSidebar } = useSidebar();
   const isActive = (path: string) => location.pathname === path;
 
-  const navItems = [
-    { path: '/dashboard', icon: Layout, label: 'Dashboard' },
-    { path: '/advisor', icon: MessageSquare, label: 'Study Buddy' },
-    { path: '/planner', icon: Settings, label: 'Exam Prep' },
-    { path: '/roadmap', icon: Map, label: 'Skill Roadmap' },
-
-    { path: '/resume', icon: FileText, label: 'Resume Builder' },
-    { path: '/quiz', icon: Brain, label: 'Quiz Maker' },
-    { path: '/performance', icon: TrendingUp, label: 'Performance' },
-    { path: '/notes', icon: BookOpen, label: 'Notes' },
-    { path: '/transcript', icon: AudioLines, label: 'Transcripts' },
-    { path: '/gpa', icon: Calculator, label: 'GPA Calculator' },
-    { path: '/timer', icon: Timer, label: 'Focus Timer' },
-    { path: '/timetable', icon: CalendarDays, label: 'Timetable' },
-    { path: '/interview', icon: MessageSquare, label: 'Interview Prep' },
+  const navGroups = [
+    {
+      label: 'OVERVIEW',
+      items: [
+        { path: '/dashboard', icon: Layout, label: 'Dashboard' },
+      ],
+    },
+    {
+      label: 'TOOLS',
+      items: [
+        { path: '/advisor', icon: MessageSquare, label: 'Study Buddy' },
+        { path: '/quiz', icon: Brain, label: 'Quiz Maker' },
+        { path: '/notes', icon: BookOpen, label: 'Notes' },
+        { path: '/transcript', icon: AudioLines, label: 'Transcripts' },
+        { path: '/timer', icon: Timer, label: 'Focus Timer' },
+      ],
+    },
+    {
+      label: 'TRACK',
+      items: [
+        { path: '/performance', icon: TrendingUp, label: 'Performance' },
+        { path: '/gpa', icon: Calculator, label: 'GPA Calculator' },
+        { path: '/timetable', icon: CalendarDays, label: 'Timetable' },
+      ],
+    },
+    {
+      label: 'BUILD',
+      items: [
+        { path: '/planner', icon: Settings, label: 'Exam Prep' },
+        { path: '/roadmap', icon: Map, label: 'Skill Roadmap' },
+        { path: '/resume', icon: FileText, label: 'Resume Builder' },
+        { path: '/interview', icon: MessageSquare, label: 'Interview Prep' },
+      ],
+    },
   ];
 
   if (user && isAdmin(user.email)) {
-    navItems.push({ path: '/admin', icon: BarChart, label: 'Admin Panel' });
+    navGroups.push({
+      label: 'ADMIN',
+      items: [{ path: '/admin', icon: BarChart, label: 'Admin Panel' }],
+    });
   }
 
   if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/profile-setup') return null;
@@ -111,56 +133,88 @@ const Sidebar = () => {
 
       {/* Nav items */}
       <nav className="flex-1 overflow-y-auto custom-scrollbar" style={{ padding: isCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-        <p
-          className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 whitespace-nowrap overflow-hidden"
-          style={{
-            opacity: isCollapsed ? 0 : 1,
-            height: isCollapsed ? 0 : 'auto',
-            marginBottom: isCollapsed ? 0 : '16px',
-            marginLeft: isCollapsed ? 0 : '16px',
-            transition: 'opacity 0.2s ease, height 0.3s ease, margin 0.3s ease',
-          }}
-        >
-          Main Menu
-        </p>
-        <div className="space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              title={isCollapsed ? item.label : undefined}
-              className={`relative flex items-center rounded-xl transition-all duration-300 group overflow-hidden ${isActive(item.path)
-                ? 'bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 font-bold'
-                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
-                }`}
+        {navGroups.map((group, groupIndex) => (
+          <div key={group.label}>
+            {/* Group separator line (between groups, not before the first) */}
+            {groupIndex > 0 && (
+              <div
+                className="mx-auto my-2"
+                style={{
+                  width: isCollapsed ? '32px' : 'calc(100% - 32px)',
+                  height: '1px',
+                  background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.18), transparent)',
+                  transition: 'width 0.35s ease',
+                }}
+              />
+            )}
+
+            {/* Group label */}
+            <p
+              className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] whitespace-nowrap overflow-hidden select-none"
               style={{
-                padding: isCollapsed ? '12px' : '12px 20px',
-                justifyContent: isCollapsed ? 'center' : 'flex-start',
-                gap: isCollapsed ? '0' : '16px',
-                transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1), gap 0.35s ease, justify-content 0.35s ease',
+                opacity: isCollapsed ? 0 : 1,
+                height: isCollapsed ? 0 : 'auto',
+                marginBottom: isCollapsed ? 0 : '8px',
+                marginTop: isCollapsed ? 0 : (groupIndex === 0 ? '0' : '12px'),
+                marginLeft: isCollapsed ? 0 : '16px',
+                transition: 'opacity 0.2s ease, height 0.3s ease, margin 0.3s ease',
               }}
             >
-              {isActive(item.path) && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-600 dark:bg-brand-400 rounded-r-full"></div>
-              )}
-              <item.icon
-                size={22}
-                className={`flex-shrink-0 transition-transform duration-300 ${isActive(item.path) ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-3'}`}
-              />
-              <span
-                className="text-sm tracking-wide whitespace-nowrap"
-                style={{
-                  opacity: isCollapsed ? 0 : 1,
-                  width: isCollapsed ? 0 : 'auto',
-                  overflow: 'hidden',
-                  transition: 'opacity 0.2s ease, width 0.3s ease',
-                }}
-              >
-                {item.label}
-              </span>
-            </Link>
-          ))}
-        </div>
+              {group.label}
+            </p>
+
+            {/* Group items */}
+            <div className="space-y-1">
+              {group.items.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  title={isCollapsed ? item.label : undefined}
+                  className={`relative flex items-center rounded-xl transition-all duration-300 group overflow-hidden ${isActive(item.path)
+                    ? 'text-brand-700 dark:text-brand-300 font-bold sidebar-active-item'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800/60 hover:text-gray-900 dark:hover:text-white'
+                    }`}
+                  style={{
+                    padding: isCollapsed ? '12px' : '12px 20px',
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    gap: isCollapsed ? '0' : '16px',
+                    background: isActive(item.path)
+                      ? 'linear-gradient(90deg, rgba(124,58,237,0.18) 0%, rgba(139,92,246,0.08) 40%, transparent 100%)'
+                      : undefined,
+                    transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1), gap 0.35s ease, background 0.3s ease',
+                  }}
+                >
+                  {/* Left accent bar for active item */}
+                  <div
+                    className="absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full"
+                    style={{
+                      width: isActive(item.path) ? '3px' : '0px',
+                      height: isActive(item.path) ? '60%' : '0%',
+                      background: 'linear-gradient(180deg, #a78bfa, #7c3aed)',
+                      boxShadow: isActive(item.path) ? '0 0 12px 2px rgba(124,58,237,0.5)' : 'none',
+                      transition: 'width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease',
+                    }}
+                  />
+                  <item.icon
+                    size={22}
+                    className={`flex-shrink-0 transition-transform duration-300 ${isActive(item.path) ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-3'}`}
+                  />
+                  <span
+                    className="text-sm tracking-wide whitespace-nowrap"
+                    style={{
+                      opacity: isCollapsed ? 0 : 1,
+                      width: isCollapsed ? 0 : 'auto',
+                      overflow: 'hidden',
+                      transition: 'opacity 0.2s ease, width 0.3s ease',
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Bottom section */}
@@ -193,9 +247,9 @@ const Sidebar = () => {
           </div>
 
           {user?.targetRole && !isCollapsed && (
-            <div className="flex items-center gap-2 px-3 py-1 bg-brand-50 dark:bg-brand-900/20 rounded-lg mt-3">
-              <Sparkles size={12} className="text-brand-600" />
-              <span className="text-[10px] font-black text-brand-700 dark:text-brand-300 uppercase tracking-tighter">AI Optimized</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg mt-3 ai-badge-glow">
+              <Sparkles size={12} className="text-brand-400 ai-badge-sparkle" />
+              <span className="text-[10px] font-black text-brand-300 uppercase tracking-tighter">AI Optimized</span>
             </div>
           )}
         </div>

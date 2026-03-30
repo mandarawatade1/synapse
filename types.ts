@@ -102,6 +102,7 @@ export interface PrepPlan {
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+  timestamp?: string;
 }
 
 export interface KeywordGap {
