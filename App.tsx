@@ -26,6 +26,8 @@ import GPACalculator from './pages/GPACalculator';
 import PomodoroTimer from './pages/PomodoroTimer';
 import Timetable from './pages/Timetable';
 import InterviewPrep from './pages/InterviewPrep';
+import Flashcards from './pages/Flashcards';
+
 
 // Contexts
 const ThemeContext = createContext({ isDark: false, toggle: () => { } });
@@ -67,7 +69,9 @@ const Sidebar = () => {
         { path: '/advisor', icon: MessageSquare, label: 'Study Buddy' },
         { path: '/quiz', icon: Brain, label: 'Quiz Maker' },
         { path: '/notes', icon: BookOpen, label: 'Notes' },
+        { path: '/flashcards', icon: Sparkles, label: 'Flashcards (SRS)' },
         { path: '/transcript', icon: AudioLines, label: 'Transcripts' },
+
         { path: '/timer', icon: Timer, label: 'Focus Timer' },
       ],
     },
@@ -367,6 +371,7 @@ const App: React.FC = () => {
                 <Route path="/timer" element={<ProtectedRoute><PomodoroTimer /></ProtectedRoute>} />
                 <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
                 <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
+                <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
                 <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
               </Routes>
             </main>

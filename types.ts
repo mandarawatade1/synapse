@@ -247,3 +247,25 @@ export interface InterviewSession {
   overallScore: number;
   createdAt: string;
 }
+
+// ── Flashcard SRS ──
+export interface Flashcard {
+  id: string;
+  front: string;
+  back: string;
+  explanation?: string;
+  interval: number; // in days
+  easeFactor: number; // default 2.5
+  nextReview: string; // ISO string
+  consecutiveCorrect: number;
+}
+
+export interface FlashcardDeck {
+  id: string;
+  title: string;
+  subject: string;
+  cards: Flashcard[];
+  createdAt: string;
+  lastStudied?: string;
+}
+
