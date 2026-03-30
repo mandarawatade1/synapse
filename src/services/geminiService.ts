@@ -671,7 +671,8 @@ export const generateInterviewQuestions = async (
             difficulty: { type: Type.STRING, enum: ["Easy", "Medium", "Hard"] },
             expectedAnswer: { type: Type.STRING },
             tips: { type: Type.ARRAY, items: { type: Type.STRING } }
-          }
+          },
+          required: ["id", "question", "category", "difficulty", "expectedAnswer", "tips"]
         }
       }
     }

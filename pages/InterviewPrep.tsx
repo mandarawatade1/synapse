@@ -360,7 +360,7 @@ const InterviewPrep: React.FC = () => {
               <div key={idx} className="bg-white dark:bg-slate-900 p-8 rounded-[1rem] border text-left">
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <p className="text-[10px] font-black text-brand-600 uppercase mb-1">Response {idx + 1}</p>
+                    <p className="text-[10px] font-black text-brand-600 uppercase mb-1">Response {idx + 1} • {question?.category}</p>
                     <h4 className="text-xl font-black">{question?.question}</h4>
                   </div>
                   <div className="text-2xl font-black text-brand-600">{resp.score}/10</div>
