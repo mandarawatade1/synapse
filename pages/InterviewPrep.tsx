@@ -134,7 +134,6 @@ const InterviewPrep: React.FC = () => {
     return (
       <div className="max-w-4xl mx-auto p-8">
         <div className="text-center mb-12">
-          <MessageSquare className="w-8 h-8 text-brand-600 mx-auto mb-4" />
           <h1 className="text-5xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">Interview Prep</h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">Practice with AI-generated interview questions tailored to your target role.</p>
         </div>
