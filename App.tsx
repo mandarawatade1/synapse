@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, ChevronDown } from 'lucide-react';
+import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, Youtube, ChevronDown } from 'lucide-react';
 import { UserProfile } from './types';
 import { auth, googleProvider, getUserProfile, saveUserProfile } from './src/services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -22,6 +21,7 @@ import QuizMaker from './pages/QuizMaker';
 import PerformanceAnalyzer from './pages/PerformanceAnalyzer';
 import NotesManager from './pages/NotesManager';
 import TranscriptGenerator from './pages/TranscriptGenerator';
+import VideoTranscriptGenerator from './pages/VideoTranscriptGenerator';
 import GPACalculator from './pages/GPACalculator';
 import PomodoroTimer from './pages/PomodoroTimer';
 import Timetable from './pages/Timetable';
@@ -82,7 +82,7 @@ const Sidebar = () => {
   // Auto-expand the group that contains the active route
   useEffect(() => {
     const allGroups = [
-      { label: 'TOOLS', paths: ['/advisor', '/quiz', '/notes', '/flashcards', '/transcript', '/timer'] },
+      { label: 'TOOLS', paths: ['/advisor', '/quiz', '/notes', '/flashcards', '/transcript', '/video-transcript', '/timer'] },
       { label: 'TRACK', paths: ['/performance', '/gpa', '/timetable'] },
       { label: 'BUILD', paths: ['/planner', '/roadmap', '/resume', '/interview'] },
     ];
@@ -122,7 +122,7 @@ const Sidebar = () => {
         { path: '/notes', icon: BookOpen, label: 'Notes' },
         { path: '/flashcards', icon: Sparkles, label: 'Flashcards (SRS)' },
         { path: '/transcript', icon: AudioLines, label: 'Transcripts' },
-
+        { path: '/video-transcript', icon: Youtube, label: 'Video Transcript' },
         { path: '/timer', icon: Timer, label: 'Focus Timer' },
       ],
     },
@@ -438,36 +438,37 @@ const App: React.FC = () => {
 
   return (
     <UserContext.Provider value={{ user, login, logout, updateProfile }}>
-      <ThemeContext.Provider value={{ isDark, toggle: () => {} }}>
+      <ThemeContext.Provider value={{ isDark, toggle: () => { } }}>
         <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
-        <Router>
-          <div className="flex min-h-screen transition-colors">
-            <Sidebar />
-            <main className="flex-1 bg-gray-50 dark:bg-slate-950 overflow-auto scroll-smooth" style={{ transition: 'margin 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/profile-setup" element={<ProfileSetup />} />
-                <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
-                <Route path="/internships" element={<ProtectedRoute><InternshipPortal /></ProtectedRoute>} />
-                <Route path="/advisor" element={<ProtectedRoute><AdvisorChat /></ProtectedRoute>} />
-                <Route path="/planner" element={<ProtectedRoute><PrepPlanner /></ProtectedRoute>} />
-                <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
-                <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
-                <Route path="/quiz" element={<ProtectedRoute><QuizMaker /></ProtectedRoute>} />
-                <Route path="/performance" element={<ProtectedRoute><PerformanceAnalyzer /></ProtectedRoute>} />
-                <Route path="/notes" element={<ProtectedRoute><NotesManager /></ProtectedRoute>} />
-                <Route path="/transcript" element={<ProtectedRoute><TranscriptGenerator /></ProtectedRoute>} />
-                <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
-                <Route path="/timer" element={<ProtectedRoute><PomodoroTimer /></ProtectedRoute>} />
-                <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
-                <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
-                <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
-                <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
-              </Routes>
-            </main>
-          </div>
-        </Router>
+          <Router>
+            <div className="flex min-h-screen transition-colors">
+              <Sidebar />
+              <main className="flex-1 bg-gray-50 dark:bg-slate-950 overflow-auto scroll-smooth" style={{ transition: 'margin 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/profile-setup" element={<ProfileSetup />} />
+                  <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+                  <Route path="/internships" element={<ProtectedRoute><InternshipPortal /></ProtectedRoute>} />
+                  <Route path="/advisor" element={<ProtectedRoute><AdvisorChat /></ProtectedRoute>} />
+                  <Route path="/planner" element={<ProtectedRoute><PrepPlanner /></ProtectedRoute>} />
+                  <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
+                  <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
+                  <Route path="/quiz" element={<ProtectedRoute><QuizMaker /></ProtectedRoute>} />
+                  <Route path="/performance" element={<ProtectedRoute><PerformanceAnalyzer /></ProtectedRoute>} />
+                  <Route path="/notes" element={<ProtectedRoute><NotesManager /></ProtectedRoute>} />
+                  <Route path="/transcript" element={<ProtectedRoute><TranscriptGenerator /></ProtectedRoute>} />
+                  <Route path="/video-transcript" element={<ProtectedRoute><VideoTranscriptGenerator /></ProtectedRoute>} />
+                  <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
+                  <Route path="/timer" element={<ProtectedRoute><PomodoroTimer /></ProtectedRoute>} />
+                  <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+                  <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
+                  <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
+                  <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
+                </Routes>
+              </main>
+            </div>
+          </Router>
         </SidebarContext.Provider>
       </ThemeContext.Provider>
     </UserContext.Provider>

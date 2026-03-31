@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Brain, BookOpen, AudioLines, TrendingUp, ArrowRight, Sparkles, FileText, Clock, Target, Flame, Trophy, Zap, ChevronRight, CalendarDays, Plus, Trash2 } from 'lucide-react';
+import { Brain, BookOpen, AudioLines, TrendingUp, ArrowRight, Sparkles, FileText, Clock, Target, Flame, Trophy, Zap, ChevronRight, CalendarDays, Plus, Trash2, Youtube } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../App';
 import { auth } from '../src/services/firebase';
@@ -408,6 +408,7 @@ const StudentDashboard: React.FC = () => {
               <QuickToolLink label="Resume Builder" desc="ATS check & optimization" icon={<FileText size={16} />} path="/resume" />
               <QuickToolLink label="Skill Roadmap" desc="Personalized learning path" icon={<Target size={16} />} path="/roadmap" />
               <QuickToolLink label="AI Advisor" desc="Ask anything academic" icon={<Sparkles size={16} />} path="/advisor" />
+              <QuickToolLink label="Video Transcript" desc="Transcribe YouTube via AI" icon={<Youtube size={16} />} path="/video-transcript" />
             </div>
           </TiltCard>
         </div>
