@@ -163,7 +163,7 @@ const StudentDashboard: React.FC = () => {
   });
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-6 md:p-10 max-w-7xl mx-auto flex flex-col gap-6 animate-in fade-in duration-500">
 
       {/* Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -182,7 +182,7 @@ const StudentDashboard: React.FC = () => {
       </header>
 
       {/* Quick Access Cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickLinks.map(item => (
           <Link key={item.path} to={item.path}
             className="group relative overflow-hidden rounded-3xl p-6 text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-95">
@@ -202,10 +202,16 @@ const StudentDashboard: React.FC = () => {
         ))}
       </section>
 
-      {/* Streak + Exams row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Study Streak */}
-        <TiltCard className="bg-white dark:bg-slate-950 border border-gray-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+      {/* Main 12-Column Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Left Column (8 cols) */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          
+          {/* Streak + Exams row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Study Streak */}
+            <TiltCard className="bg-white dark:bg-slate-950 border border-gray-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-black text-gray-900 dark:text-white flex items-center gap-2"><Flame size={18} className="text-orange-500" /> Study Streak</h3>
             <span className="text-2xl font-black text-orange-500">{studyStreak} 🔥</span>
@@ -222,11 +228,11 @@ const StudentDashboard: React.FC = () => {
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3">Use any Synapse tool to keep your streak alive!</p>
+          <p className="text-xs text-gray-400 mt-auto pt-3">Use any Synapse tool to keep your streak alive!</p>
         </TiltCard>
 
         {/* Upcoming Exams */}
-        <TiltCard className="bg-white dark:bg-slate-950 border border-gray-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+        <TiltCard className="bg-white dark:bg-slate-950 border border-gray-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-black text-gray-900 dark:text-white flex items-center gap-2"><CalendarDays size={18} className="text-red-500" /> Upcoming Exams</h3>
             <button onClick={() => setShowAddExam(!showAddExam)} className="p-1.5 bg-gray-100 dark:bg-slate-800 rounded-lg text-gray-400 hover:text-brand-600 transition-colors"><Plus size={14} /></button>
@@ -263,14 +269,10 @@ const StudentDashboard: React.FC = () => {
             </div>
           )}
         </TiltCard>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column */}
-        <div className="lg:col-span-8 space-y-8">
+          </div>
 
           {/* Study Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <StatCard label="Quizzes Taken" value={quizzes.length} icon={<Brain size={18} />} color="text-purple-500" bg="bg-purple-50 dark:bg-purple-900/20" loading={loading} progress={Math.min(quizzes.length * 10, 100)} />
             <StatCard label="Avg Quiz Score" value={avgQuizScore !== null ? `${avgQuizScore}%` : '—'} icon={<Trophy size={18} />} color="text-yellow-500" bg="bg-yellow-50 dark:bg-yellow-900/20" loading={loading} progress={avgQuizScore !== null ? avgQuizScore : 0} />
             <StatCard label="Notes Saved" value={notes.length} icon={<BookOpen size={18} />} color="text-blue-500" bg="bg-blue-50 dark:bg-blue-900/20" loading={loading} progress={Math.min(notes.length * 5, 100)} />
@@ -315,7 +317,7 @@ const StudentDashboard: React.FC = () => {
             )}
           </div>
 
-          {/* Latest Performance */}
+            {/* Latest Performance */}
           {latestReport && (
             <TiltCard className="bg-white dark:bg-slate-950 border border-gray-100 dark:border-slate-800 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-green-500/5 transition-all duration-300 animate-in fade-in duration-500">
               <div className="flex justify-between items-center mb-6">
@@ -349,11 +351,35 @@ const StudentDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Right Column */}
-        <div className="lg:col-span-4 space-y-8">
+        {/* Right Column (4 cols) border/spacing fix */}
+        <div className="lg:col-span-4 flex flex-col gap-6">
+
+          {/* Profile Snapshot - Moved to top for true sidebar feel */}
+          <TiltCard className="bg-gradient-to-br from-gray-900 to-slate-800 dark:from-slate-900 dark:to-slate-950 rounded-3xl p-6 text-white shadow-xl transition-transform duration-300">
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Your Profile</p>
+            <h3 className="text-xl font-black mb-1">{user?.name || 'Student'}</h3>
+            <p className="text-gray-400 text-sm font-medium mb-4">
+              {user?.targetRole || 'Exploring'} • Class of {user?.graduationYear || '2025'}
+            </p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {(user?.skills || []).slice(0, 4).map(skill => (
+                <span key={skill} className="text-[10px] font-bold px-2 py-1 bg-white/10 rounded-lg border border-white/10">
+                  {skill}
+                </span>
+              ))}
+              {(user?.skills || []).length > 4 && (
+                <span className="text-[10px] font-bold px-2 py-1 bg-white/10 rounded-lg border border-white/10">
+                  +{(user?.skills || []).length - 4} more
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <span className="px-2 py-1 bg-brand-500/20 text-brand-300 rounded-md font-bold">{user?.currentLevel}</span>
+            </div>
+          </TiltCard>
 
           {/* AI Study Tip */}
-          <TiltCard className="bg-brand-50 dark:bg-brand-950/30 border border-brand-100 dark:border-brand-900/50 p-6 rounded-3xl relative overflow-hidden group hover:shadow-xl hover:shadow-brand-500/10 transition-all duration-300">
+          <TiltCard className="bg-brand-50 dark:bg-brand-950/30 border border-brand-100 dark:border-brand-900/50 p-6 rounded-3xl relative overflow-hidden group hover:shadow-xl hover:shadow-brand-500/10 transition-all duration-300 flex-none">
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
               <Sparkles size={100} />
             </div>
@@ -376,36 +402,12 @@ const StudentDashboard: React.FC = () => {
           </TiltCard>
 
           {/* Tools & Utilities */}
-          <TiltCard className="bg-white dark:bg-slate-950 border border-gray-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:shadow-brand-500/5 transition-all duration-300">
+          <TiltCard className="bg-white dark:bg-slate-950 border border-gray-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:shadow-brand-500/5 transition-all duration-300 flex-1 flex flex-col">
             <h3 className="text-lg font-black text-gray-900 dark:text-white mb-4">Quick Tools</h3>
-            <div className="space-y-2">
+            <div className="space-y-2 flex-1">
               <QuickToolLink label="Resume Builder" desc="ATS check & optimization" icon={<FileText size={16} />} path="/resume" />
               <QuickToolLink label="Skill Roadmap" desc="Personalized learning path" icon={<Target size={16} />} path="/roadmap" />
               <QuickToolLink label="AI Advisor" desc="Ask anything academic" icon={<Sparkles size={16} />} path="/advisor" />
-            </div>
-          </TiltCard>
-
-          {/* Profile Snapshot */}
-          <TiltCard className="bg-gradient-to-br from-gray-900 to-slate-800 dark:from-slate-900 dark:to-slate-950 rounded-3xl p-6 text-white shadow-xl transition-transform duration-300">
-            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Your Profile</p>
-            <h3 className="text-xl font-black mb-1">{user?.name || 'Student'}</h3>
-            <p className="text-gray-400 text-sm font-medium mb-4">
-              {user?.targetRole || 'Exploring'} • Class of {user?.graduationYear || '2025'}
-            </p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {(user?.skills || []).slice(0, 4).map(skill => (
-                <span key={skill} className="text-[10px] font-bold px-2 py-1 bg-white/10 rounded-lg border border-white/10">
-                  {skill}
-                </span>
-              ))}
-              {(user?.skills || []).length > 4 && (
-                <span className="text-[10px] font-bold px-2 py-1 bg-white/10 rounded-lg border border-white/10">
-                  +{(user?.skills || []).length - 4} more
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span className="px-2 py-1 bg-brand-500/20 text-brand-300 rounded-md font-bold">{user?.currentLevel}</span>
             </div>
           </TiltCard>
         </div>
