@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, Youtube } from 'lucide-react';
 import { UserProfile } from './types';
 import { auth, googleProvider, getUserProfile, saveUserProfile } from './src/services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -22,6 +22,7 @@ import QuizMaker from './pages/QuizMaker';
 import PerformanceAnalyzer from './pages/PerformanceAnalyzer';
 import NotesManager from './pages/NotesManager';
 import TranscriptGenerator from './pages/TranscriptGenerator';
+import VideoTranscriptGenerator from './pages/VideoTranscriptGenerator';
 import GPACalculator from './pages/GPACalculator';
 import PomodoroTimer from './pages/PomodoroTimer';
 import Timetable from './pages/Timetable';
@@ -68,6 +69,7 @@ const Sidebar = () => {
         { path: '/quiz', icon: Brain, label: 'Quiz Maker' },
         { path: '/notes', icon: BookOpen, label: 'Notes' },
         { path: '/transcript', icon: AudioLines, label: 'Transcripts' },
+        { path: '/video-transcript', icon: Youtube, label: 'Video Transcript' },
         { path: '/timer', icon: Timer, label: 'Focus Timer' },
       ],
     },
@@ -363,6 +365,7 @@ const App: React.FC = () => {
                 <Route path="/performance" element={<ProtectedRoute><PerformanceAnalyzer /></ProtectedRoute>} />
                 <Route path="/notes" element={<ProtectedRoute><NotesManager /></ProtectedRoute>} />
                 <Route path="/transcript" element={<ProtectedRoute><TranscriptGenerator /></ProtectedRoute>} />
+                <Route path="/video-transcript" element={<ProtectedRoute><VideoTranscriptGenerator /></ProtectedRoute>} />
                 <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
                 <Route path="/timer" element={<ProtectedRoute><PomodoroTimer /></ProtectedRoute>} />
                 <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
