@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, ChevronDown } from 'lucide-react';
 import { UserProfile } from './types';
 import { auth, googleProvider, getUserProfile, saveUserProfile } from './src/services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -56,6 +56,57 @@ const Sidebar = () => {
   const { isCollapsed, toggleSidebar } = useSidebar();
   const isActive = (path: string) => location.pathname === path;
 
+  // Hover-to-expand state
+  const [isHovered, setIsHovered] = useState(false);
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, 300); // 300ms delay to allow quick tooltips without full expansion
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setIsHovered(false);
+  };
+
+  const effectivelyCollapsed = isCollapsed && !isHovered;
+
+  // Collapsible section state — persisted in localStorage
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    const saved = localStorage.getItem('sidebar-expanded-groups');
+    return saved ? JSON.parse(saved) : { OVERVIEW: true, TOOLS: true, TRACK: true, BUILD: true, ADMIN: true };
+  });
+
+  // Auto-expand the group that contains the active route
+  useEffect(() => {
+    const allGroups = [
+      { label: 'TOOLS', paths: ['/advisor', '/quiz', '/notes', '/flashcards', '/transcript', '/timer'] },
+      { label: 'TRACK', paths: ['/performance', '/gpa', '/timetable'] },
+      { label: 'BUILD', paths: ['/planner', '/roadmap', '/resume', '/interview'] },
+    ];
+    for (const g of allGroups) {
+      if (g.paths.includes(location.pathname) && !expandedGroups[g.label]) {
+        setExpandedGroups(prev => {
+          const next = { ...prev, [g.label]: true };
+          localStorage.setItem('sidebar-expanded-groups', JSON.stringify(next));
+          return next;
+        });
+      }
+    }
+  }, [location.pathname]);
+
+  const toggleGroup = (label: string) => {
+    setExpandedGroups(prev => {
+      const next = { ...prev, [label]: !prev[label] };
+      localStorage.setItem('sidebar-expanded-groups', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const isCollapsibleGroup = (label: string) => ['TOOLS', 'TRACK', 'BUILD'].includes(label);
+
   const navGroups = [
     {
       label: 'OVERVIEW',
@@ -105,21 +156,23 @@ const Sidebar = () => {
 
   return (
     <div
-      className="bg-white dark:bg-slate-900 border-r dark:border-slate-800 h-screen sticky top-0 flex flex-col overflow-hidden"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`bg-white dark:bg-slate-900 border-r dark:border-slate-800 h-screen sticky top-0 flex flex-col overflow-hidden ${isHovered && isCollapsed ? 'absolute shadow-2xl z-50' : 'relative z-40'}`}
       style={{
-        width: isCollapsed ? '80px' : '320px',
-        minWidth: isCollapsed ? '80px' : '320px',
+        width: effectivelyCollapsed ? '80px' : '320px',
+        minWidth: effectivelyCollapsed ? '80px' : '320px',
         transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       {/* Logo + Toggle */}
       <div
-        className={`border-b dark:border-slate-800 flex ${isCollapsed ? 'flex-col items-center gap-3' : 'items-center justify-between'}`}
-        style={{ padding: isCollapsed ? '20px 12px' : '32px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}
+        className={`border-b dark:border-slate-800 flex ${effectivelyCollapsed ? 'flex-col items-center gap-3' : 'items-center justify-between'}`}
+        style={{ padding: effectivelyCollapsed ? '20px 12px' : '32px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}
       >
         <Link to="/dashboard" className="flex items-center gap-3 group">
-          <img src="/logo.png" alt="Synapse Logo" className={`${isCollapsed ? 'w-10 h-10' : 'w-12 h-12'} object-contain flex-shrink-0 group-hover:scale-110 transition-all duration-300 drop-shadow-md`} />
-          {!isCollapsed && (
+          <img src="/logo.png" alt="Synapse Logo" className={`${effectivelyCollapsed ? 'w-10 h-10' : 'w-12 h-12'} object-contain flex-shrink-0 group-hover:scale-110 transition-all duration-300 drop-shadow-md`} />
+          {!effectivelyCollapsed && (
             <span className="text-3xl font-black text-brand-600 dark:text-brand-400 font-logo whitespace-nowrap">
               Synapse
             </span>
@@ -136,85 +189,123 @@ const Sidebar = () => {
       </div>
 
       {/* Nav items */}
-      <nav className="flex-1 overflow-y-auto custom-scrollbar" style={{ padding: isCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <nav className="flex-1 overflow-y-auto custom-scrollbar" style={{ padding: effectivelyCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         {navGroups.map((group, groupIndex) => (
           <div key={group.label}>
             {/* Group separator line (between groups, not before the first) */}
             {groupIndex > 0 && (
               <div
-                className="mx-auto my-2"
+                className="mx-auto my-3"
                 style={{
-                  width: isCollapsed ? '32px' : 'calc(100% - 32px)',
+                  width: effectivelyCollapsed ? '32px' : 'calc(100% - 48px)',
                   height: '1px',
-                  background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.18), transparent)',
+                  background: 'linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.15), transparent)',
                   transition: 'width 0.35s ease',
                 }}
               />
             )}
 
-            {/* Group label */}
-            <p
-              className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] whitespace-nowrap overflow-hidden select-none"
+            {/* Group label — clickable toggle for collapsible groups */}
+            {isCollapsibleGroup(group.label) && !effectivelyCollapsed ? (
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className="w-full flex items-center justify-between cursor-pointer select-none group/label"
+                style={{
+                  marginBottom: '8px',
+                  marginTop: groupIndex === 0 ? '0' : '12px',
+                  paddingLeft: '16px',
+                  paddingRight: '16px',
+                }}
+              >
+                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] group-hover/label:text-brand-400 transition-colors duration-200">
+                  {group.label}
+                </span>
+                <ChevronDown
+                  size={14}
+                  className={`text-gray-400 dark:text-gray-600 group-hover/label:text-brand-400 transition-all duration-300 ${expandedGroups[group.label] ? 'rotate-0' : '-rotate-90'}`}
+                />
+              </button>
+            ) : (
+              <p
+                className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] whitespace-nowrap overflow-hidden select-none"
+                style={{
+                  opacity: effectivelyCollapsed ? 0 : 1,
+                  height: effectivelyCollapsed ? 0 : 'auto',
+                  marginBottom: effectivelyCollapsed ? 0 : '8px',
+                  marginTop: effectivelyCollapsed ? 0 : (groupIndex === 0 ? '0' : '12px'),
+                  marginLeft: effectivelyCollapsed ? 0 : '16px',
+                  transition: 'opacity 0.2s ease, height 0.3s ease, margin 0.3s ease',
+                }}
+              >
+                {group.label}
+              </p>
+            )}
+
+            {/* Group items — with collapse animation */}
+            <div
+              className="space-y-1 overflow-hidden"
               style={{
-                opacity: isCollapsed ? 0 : 1,
-                height: isCollapsed ? 0 : 'auto',
-                marginBottom: isCollapsed ? 0 : '8px',
-                marginTop: isCollapsed ? 0 : (groupIndex === 0 ? '0' : '12px'),
-                marginLeft: isCollapsed ? 0 : '16px',
-                transition: 'opacity 0.2s ease, height 0.3s ease, margin 0.3s ease',
+                maxHeight: (!isCollapsibleGroup(group.label) || expandedGroups[group.label]) ? `${group.items.length * 52}px` : '0px',
+                opacity: (!isCollapsibleGroup(group.label) || expandedGroups[group.label]) ? 1 : 0,
+                transition: 'max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease',
               }}
             >
-              {group.label}
-            </p>
-
-            {/* Group items */}
-            <div className="space-y-1">
               {group.items.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  title={isCollapsed ? item.label : undefined}
-                  className={`relative flex items-center rounded-xl transition-all duration-300 group overflow-hidden ${isActive(item.path)
-                    ? 'text-brand-700 dark:text-brand-300 font-bold sidebar-active-item'
-                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800/60 hover:text-gray-900 dark:hover:text-white'
-                    }`}
-                  style={{
-                    padding: isCollapsed ? '12px' : '12px 20px',
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    gap: isCollapsed ? '0' : '16px',
-                    background: isActive(item.path)
-                      ? 'linear-gradient(90deg, rgba(124,58,237,0.18) 0%, rgba(139,92,246,0.08) 40%, transparent 100%)'
-                      : undefined,
-                    transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1), gap 0.35s ease, background 0.3s ease',
-                  }}
-                >
-                  {/* Left accent bar for active item */}
-                  <div
-                    className="absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full"
+                <div key={item.path} className="relative group/navitem">
+                  <Link
+                    to={item.path}
+                    className={`relative flex items-center rounded-xl transition-all duration-300 overflow-hidden ${isActive(item.path)
+                      ? 'text-brand-700 dark:text-brand-300 font-bold sidebar-active-item'
+                      : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800/60 hover:text-gray-900 dark:hover:text-white'
+                      }`}
                     style={{
-                      width: isActive(item.path) ? '3px' : '0px',
-                      height: isActive(item.path) ? '60%' : '0%',
-                      background: 'linear-gradient(180deg, #a78bfa, #7c3aed)',
-                      boxShadow: isActive(item.path) ? '0 0 12px 2px rgba(124,58,237,0.5)' : 'none',
-                      transition: 'width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease',
-                    }}
-                  />
-                  <item.icon
-                    size={22}
-                    className={`flex-shrink-0 transition-transform duration-300 ${isActive(item.path) ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-3'}`}
-                  />
-                  <span
-                    className="text-sm tracking-wide whitespace-nowrap"
-                    style={{
-                      opacity: isCollapsed ? 0 : 1,
-                      width: isCollapsed ? 0 : 'auto',
-                      overflow: 'hidden',
-                      transition: 'opacity 0.2s ease, width 0.3s ease',
+                      padding: effectivelyCollapsed ? '12px' : '12px 20px',
+                      justifyContent: effectivelyCollapsed ? 'center' : 'flex-start',
+                      gap: effectivelyCollapsed ? '0' : '16px',
+                      background: isActive(item.path)
+                        ? 'linear-gradient(90deg, rgba(124,58,237,0.18) 0%, rgba(139,92,246,0.08) 40%, transparent 100%)'
+                        : undefined,
+                      transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1), gap 0.35s ease, background 0.3s ease',
                     }}
                   >
-                    {item.label}
-                  </span>
-                </Link>
+                    {/* Left accent bar for active item */}
+                    <div
+                      className="absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full"
+                      style={{
+                        width: isActive(item.path) ? '3px' : '0px',
+                        height: isActive(item.path) ? '60%' : '0%',
+                        background: 'linear-gradient(180deg, #a78bfa, #7c3aed)',
+                        boxShadow: isActive(item.path) ? '0 0 12px 2px rgba(124,58,237,0.5)' : 'none',
+                        transition: 'width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease',
+                      }}
+                    />
+                    <item.icon
+                      size={22}
+                      className={`flex-shrink-0 transition-transform duration-300 ${isActive(item.path) ? 'scale-110' : 'group-hover/navitem:scale-110 group-hover/navitem:rotate-3'}`}
+                    />
+                    <span
+                      className="text-sm tracking-wide whitespace-nowrap"
+                      style={{
+                        opacity: effectivelyCollapsed ? 0 : 1,
+                        width: effectivelyCollapsed ? 0 : 'auto',
+                        overflow: 'hidden',
+                        transition: 'opacity 0.2s ease, width 0.3s ease',
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+
+                  {/* Clean Minimal Tooltip for collapsed edge cases */}
+                  {effectivelyCollapsed && (
+                    <div
+                      className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg opacity-0 invisible group-hover/navitem:opacity-100 group-hover/navitem:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-slate-700 pointer-events-none"
+                    >
+                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-800 rotate-45 border-l border-b border-slate-700" />
+                      {item.label}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>
@@ -222,19 +313,19 @@ const Sidebar = () => {
       </nav>
 
       {/* Bottom section */}
-      <div className="border-t dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50" style={{ padding: isCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <div className="border-t dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50 mt-auto" style={{ padding: effectivelyCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
 
         {/* User card */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl border dark:border-slate-700 shadow-sm overflow-hidden" style={{ padding: isCollapsed ? '10px' : '16px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-          <div className="flex items-center overflow-hidden" style={{ gap: isCollapsed ? '0' : '12px', justifyContent: isCollapsed ? 'center' : 'flex-start', transition: 'gap 0.35s ease' }}>
-            <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-300 flex-shrink-0 shadow-inner" title={isCollapsed ? (user?.name || 'Guest') : undefined}>
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border dark:border-slate-700 shadow-sm overflow-hidden" style={{ padding: effectivelyCollapsed ? '10px' : '16px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+          <div className="flex items-center overflow-hidden" style={{ gap: effectivelyCollapsed ? '0' : '12px', justifyContent: effectivelyCollapsed ? 'center' : 'flex-start', transition: 'gap 0.35s ease' }}>
+            <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-300 flex-shrink-0 shadow-inner" title={effectivelyCollapsed ? (user?.name || 'Guest') : undefined}>
               {user?.avatar ? (
                 <img src={user.avatar} className="w-full h-full object-cover rounded-2xl" referrerPolicy="no-referrer" />
               ) : (
                 <UserIcon size={20} />
               )}
             </div>
-            {!isCollapsed && (
+            {!effectivelyCollapsed && (
               <>
                 <div className="truncate flex-1">
                   <p className="text-sm font-black truncate dark:text-white tracking-tight">{user?.name || 'Guest'}</p>
@@ -250,7 +341,7 @@ const Sidebar = () => {
             )}
           </div>
 
-          {user?.targetRole && !isCollapsed && (
+          {user?.targetRole && !effectivelyCollapsed && (
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg mt-3 ai-badge-glow">
               <Sparkles size={12} className="text-brand-400 ai-badge-sparkle" />
               <span className="text-[10px] font-black text-brand-300 uppercase tracking-tighter">AI Optimized</span>
