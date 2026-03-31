@@ -1,113 +1,34 @@
+# Synapse — AI-Powered Study Platform
 
+## 🎓 Academic Details
+- **Course:** Natural Language Processing (NLP)
+- **Class:** Semester VI (Third Year Engineering)
+- **College:** Pillai College of Engineering — [Visit Official Website](https://www.pce.ac.in/)
 
-<h1 align="center">Synapse</h1>
-<p align="center"><strong>Study Smarter with AI Power</strong></p>
+## 📌 Overview
+Synapse is an intelligent, AI-driven study platform designed to eliminate the struggles of modern learning. It leverages **Natural Language Processing** and the **Google Gemini AI** to seamlessly generate quizzes from raw notes, summarize complex study material, build personalized study plans, and provide an interactive AI study advisor — all within a single, cohesive web application.
 
-<p align="center">
-  <a href="https://github.com/adityaacharya7/synapse/stargazers"><img src="https://img.shields.io/github/stars/adityaacharya7/synapse?style=for-the-badge&color=6C63FF" alt="Stars" /></a>
-  <a href="https://github.com/adityaacharya7/synapse/network/members"><img src="https://img.shields.io/github/forks/adityaacharya7/synapse?style=for-the-badge&color=A78BFA" alt="Forks" /></a>
-  <a href="https://github.com/adityaacharya7/synapse/issues"><img src="https://img.shields.io/github/issues/adityaacharya7/synapse?style=for-the-badge&color=F472B6" alt="Issues" /></a>
-  <a href="https://github.com/adityaacharya7/synapse/blob/main/LICENSE"><img src="https://img.shields.io/github/license/adityaacharya7/synapse?style=for-the-badge&color=34D399" alt="License" /></a>
-</p>
+## 🎯 Objective
+Students often struggle with inefficient study habits — spending hours re-reading notes without retaining information, lacking structured revision plans, and having no immediate feedback on their understanding. Synapse solves this by applying NLP techniques to:
+- **Automatically generate quizzes** from unstructured lecture notes to test comprehension.
+- **Summarize lengthy content** into concise, high-yield study material.
+- **Create adaptive study schedules** that prioritize weak areas.
+- **Provide a conversational AI advisor** that understands academic context and offers tailored guidance.
 
----
+## 🧠 Technologies Used
+- **Language:** TypeScript, JavaScript
+- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion, Three.js
+- **Backend / Auth:** Firebase (Authentication, Firestore Database)
+- **AI / NLP Integration:** Google Gemini API (`@google/genai`)
+- **Data Visualization:** Recharts, Lucide React
+- **Routing:** React Router DOM v7
+- **Markdown Rendering:** react-markdown
 
-Synapse is an intelligent, AI-driven study platform designed to eliminate the struggles of modern learning. It seamlessly generates quizzes, summarizes complex notes, tracks your academic performance, and builds personalized study plans — all powered by the **Google Gemini AI**.
+## 📊 Dataset
+- **Source:** User-provided input (lecture notes, study material, timetable images)
+- **Description:** Synapse processes raw, unstructured text input from students (notes, paragraphs, topics) and uses the Gemini AI's NLP capabilities to perform quiz generation, summarization, and contextual Q&A. Timetable images are parsed using the Gemini Vision API.
 
----
-
-## 📑 Table of Contents
-
-- [✨ Features](#-features)
-- [🚀 Tech Stack](#-tech-stack)
-- [📂 Project Structure](#-project-structure)
-- [💻 Getting Started](#-getting-started)
-- [⚙️ Environment Variables](#%EF%B8%8F-environment-variables)
-- [🤝 Contributing](#-contributing)
-- [📜 License](#-license)
-
----
-
-## ✨ Features
-
-| Feature | Description |
-|---|---|
-| **📝 AI Quiz Maker** | Generate interactive quizzes instantly from your notes via advanced AI analysis. |
-| **📒 Notes Summarizer** | Paste your notes and let Synapse extract the key concepts, definitions, and high-yield summaries you actually need. |
-| **📅 Exam Prep Planner** | Stop cramming. Synapse intelligently creates personalized and adaptive study schedules to keep you on track. |
-| **📊 Performance Analyzer** | Track your scores across subjects, visualize strengths and weaknesses, and get AI-powered improvement plans. |
-| **🎙️ Transcript Generator** | Convert lecture content into structured transcripts with key concepts, summaries, and action items. |
-| **💬 AI Study Advisor** | Chat with an AI study buddy that understands your academic context and provides tailored guidance. |
-| **📄 Resume Builder** | Build ATS-friendly resumes with real-time AI scoring and bullet-point improvement suggestions. |
-| **🗺️ Career Roadmap** | Get a personalized learning roadmap based on your target role, current skills, and experience level. |
-| **💼 Internship Portal** | Discover relevant internships and co-ops matched to your profile, skills, and graduation year. |
-| **🎤 Interview Prep** | Practice mock interviews with AI-generated questions tailored to your target role and difficulty level. |
-| **🎓 Student Dashboard** | Stay organized with built-in tools — GPA Calculator, Timetable Builder (with Image-to-Schedule AI), Pomodoro Timer, and Study Streak tracking. |
-
----
-
-## 🚀 Tech Stack
-
-| Layer | Technologies |
-|---|---|
-| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v4, Framer Motion, Three.js |
-| **Backend / Auth** | Firebase (Authentication, Firestore Database) |
-| **AI Integration** | Google Gemini API (`@google/genai`) |
-| **Data Visualization** | Recharts, Lucide React |
-| **Routing** | React Router DOM v7 |
-| **Markdown** | react-markdown |
-
----
-
-## 📂 Project Structure
-
-```
-synapse/
-├── index.html              # HTML entry point
-├── index.tsx               # React app bootstrap
-├── index.css               # Global styles (Tailwind)
-├── App.tsx                 # Main app with routing & sidebar
-├── types.ts                # Shared TypeScript interfaces
-├── vite.config.ts          # Vite configuration
-├── package.json            # Dependencies & scripts
-├── vercel.json             # Vercel deployment config
-├── .env.local              # Environment variables (not committed)
-│
-├── pages/                  # All page-level components
-│   ├── Landing.tsx
-│   ├── Login.tsx
-│   ├── ProfileSetup.tsx
-│   ├── StudentDashboard.tsx
-│   ├── QuizMaker.tsx
-│   ├── NotesManager.tsx
-│   ├── PrepPlanner.tsx
-│   ├── PerformanceAnalyzer.tsx
-│   ├── TranscriptGenerator.tsx
-│   ├── AdvisorChat.tsx
-│   ├── ResumeBuilder.tsx
-│   ├── Roadmap.tsx
-│   ├── InternshipPortal.tsx
-│   ├── InterviewPrep.tsx
-│   ├── GPACalculator.tsx
-│   ├── PomodoroTimer.tsx
-│   ├── Timetable.tsx
-│   └── AdminPanel.tsx
-│
-└── src/
-    ├── components/         # Reusable UI components
-    ├── config/             # App configuration (admin emails, etc.)
-    └── services/           # Backend services
-        ├── firebase.ts         # Firebase init & auth helpers
-        ├── geminiService.ts    # Gemini AI API integration
-        ├── jobService.ts       # Internship data service
-        └── adminService.ts     # Admin functionality
-```
-
----
-
-## 💻 Getting Started
-
-Follow these instructions to get Synapse running locally on your machine.
+## ⚙️ Installation
 
 ### Prerequisites
 
@@ -115,7 +36,7 @@ Follow these instructions to get Synapse running locally on your machine.
 - [Git](https://git-scm.com/)
 - A **Google Gemini API Key** — [Get one here](https://aistudio.google.com/app/apikey)
 
-### Installation
+### Steps to Run the Project
 
 **1. Clone the repository:**
 
@@ -129,7 +50,7 @@ git clone https://github.com/adityaacharya7/synapse.git
 cd synapse
 ```
 
-**3. Install dependencies:**
+**3. Install all dependencies:**
 
 ```bash
 npm install
@@ -137,7 +58,7 @@ npm install
 
 **4. Set up environment variables:**
 
-Create a `.env.local` file in the root of the project (see the [Environment Variables](#%EF%B8%8F-environment-variables) section below for details):
+Create a `.env.local` file in the root of the project:
 
 ```bash
 # On Linux / macOS
@@ -147,12 +68,14 @@ touch .env.local
 New-Item .env.local
 ```
 
-Add your API key to the file:
+Add your API keys to the `.env.local` file:
 
 ```env
 VITE_GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
+
+> **Note:** The `.env.local` file is listed in `.gitignore` and will **not** be committed. Never share your API keys publicly.
 
 **5. Start the development server:**
 
@@ -160,43 +83,44 @@ GEMINI_API_KEY=your_gemini_api_key_here
 npm run dev
 ```
 
-**6. Open your browser:**
-
-Navigate to the localhost link provided by Vite (typically [http://localhost:5173](http://localhost:5173)) to view the application.
+**6. Open your browser** and navigate to [http://localhost:5173](http://localhost:5173).
 
 ---
 
-## ⚙️ Environment Variables
+## 🤝 Collaborative Workflow (Git Commands)
 
-Synapse requires certain environment variables to function. Create a `.env.local` file in the project root with the following:
-
-| Variable | Required | Description |
-|---|---|---|
-| `VITE_GEMINI_API_KEY` | ✅ Yes | Your Google Gemini API key (used by the frontend via Vite) |
-| `GEMINI_API_KEY` | ✅ Yes | Your Google Gemini API key (used by services) |
-
-> **Note:** The `.env.local` file is listed in `.gitignore` and will **not** be committed to the repository. Never share your API keys publicly.
-
----
-
-## 🤝 Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**!
+This section explains how team members can collaborate on this project using Git.
 
 ### Step 1 — Fork & Clone
 
-1. **Fork** this repository by clicking the **Fork** button at the top-right of the repo page.
+1. **Fork** this repository by clicking the **Fork** button on the top-right of the GitHub repo page.
 
 2. **Clone** your forked copy to your local machine:
-   ```bash
-   git clone https://github.com/<your-username>/synapse.git
-   cd synapse
-   ```
+
+```bash
+git clone https://github.com/<your-username>/synapse.git
+cd synapse
+```
 
 3. **Add the upstream remote** (the original repo) so you can stay in sync:
-   ```bash
-   git remote add upstream https://github.com/adityaacharya7/synapse.git
-   ```
+
+```bash
+git remote add upstream https://github.com/adityaacharya7/synapse.git
+```
+
+4. **Verify remotes** are set up correctly:
+
+```bash
+git remote -v
+```
+
+Expected output:
+```
+origin    https://github.com/<your-username>/synapse.git (fetch)
+origin    https://github.com/<your-username>/synapse.git (push)
+upstream  https://github.com/adityaacharya7/synapse.git (fetch)
+upstream  https://github.com/adityaacharya7/synapse.git (push)
+```
 
 ### Step 2 — Create a Branch
 
@@ -227,11 +151,11 @@ git checkout -b feature/your-feature-name
 Make your code changes, then verify everything works:
 
 ```bash
+# Install dependencies (if new packages were added)
+npm install
+
 # Start the dev server and test your changes
 npm run dev
-
-# (Optional) Build to check for any compilation errors
-npm run build
 ```
 
 ### Step 4 — Stage, Commit & Push
@@ -286,16 +210,65 @@ git pull upstream main
 git push origin main
 ```
 
----
+### Pulling a Teammate's Branch (for Review or Collaboration)
 
-## 📜 License
+```bash
+# Add your teammate's fork as a remote (one-time setup)
+git remote add <teammate> https://github.com/<teammate-username>/synapse.git
 
-Distributed under the MIT License. See `LICENSE` for more information.
+# Fetch their branches
+git fetch <teammate>
 
----
+# Checkout their branch locally
+git checkout -b review/<teammate>-feature <teammate>/feature/their-feature-name
+```
 
-<div align="center">
-  <strong>Built with ❤️ by <a href="https://github.com/adityaacharya7">Aditya Acharya</a></strong>
-  <br />
-  <sub>If you found this helpful, consider giving the repo a ⭐!</sub>
-</div>
+## ▶️ Usage
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open your browser and navigate to the localhost link provided by Vite (typically [http://localhost:5173](http://localhost:5173)).
+
+### Key Features to Explore
+| Feature | Description |
+|---|---|
+| 📝 AI Quiz Maker | Generate quizzes from your notes using NLP |
+| 📒 Notes Summarizer | Extract key concepts and summaries from study material |
+| 📅 Exam Prep Planner | AI-generated adaptive study schedules |
+| 📊 Performance Analyzer | Track scores and get AI-powered improvement plans |
+| 🎙️ Transcript Generator | Convert lecture content into structured transcripts |
+| 💬 AI Study Advisor | Chat with an AI buddy that understands your academic context |
+| 📄 Resume Builder | Build ATS-friendly resumes with AI scoring |
+| 🗺️ Career Roadmap | Personalized learning roadmaps based on your goals |
+| 💼 Internship Portal | Discover relevant internships matched to your profile |
+| 🎤 Interview Prep | Practice mock interviews with AI-generated questions |
+| 🎓 Student Dashboard | GPA Calculator, Timetable Builder, Pomodoro Timer, Study Streaks |
+
+## 📈 Results
+- AI-generated quizzes accurately test comprehension of user-provided content.
+- Note summarization reduces study material volume while preserving key concepts.
+- Adaptive study plans dynamically adjust based on student performance analytics.
+- The conversational AI advisor provides contextually relevant academic guidance.
+
+## 🎥 Demo Video
+[YouTube Demo Link — Coming Soon]
+
+## 👥 Team Members
+- Aditya Acharya
+- Member 2
+- Member 3
+
+## 📌 GitHub Contributions
+- **Aditya Acharya** – Project architecture, AI integration, frontend development
+- **Member 2** – Contribution details
+- **Member 3** – Contribution details
+
+## 📚 References
+- [Google Gemini API Documentation](https://ai.google.dev/docs)
+- [React Documentation](https://react.dev/)
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [Vite Documentation](https://vitejs.dev/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
