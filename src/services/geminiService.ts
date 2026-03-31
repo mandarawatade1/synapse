@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { RoadmapData, PrepPlan, UserProfile, ATSAnalysis, ChatMessage, QuizQuestion, SubjectScore, InterviewQuestion } from "../../types";
+import { RoadmapData, PrepPlan, UserProfile, ATSAnalysis, ChatMessage, QuizQuestion, SubjectScore, InterviewQuestion, Flashcard } from "../../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -589,6 +589,59 @@ export const generateTranscript = async (
   });
   return JSON.parse(response.text || '{}');
 };
+// ── Native Video Transcript Generator ──
+export const generateNativeVideoTranscript = async (
+  videoUrl: string,
+  subject: string = 'General'
+): Promise<{
+  tldr: string;
+  sections: { heading: string; content: string; keyConcepts: string[] }[];
+  actionItems: string[];
+}> => {
+  const prompt = `You are an expert lecture organizer. Watch the provided YouTube video lecture about ${subject} and generate a structured transcript and study notes. Ensure you process the video's actual audio and visual content.
+
+  Provide your response strictly in JSON matching the schema below:
+  1. tldr: A 2-3 sentence summary of the entire video lecture
+  2. sections: Break the content into logical sections, each with a heading, the detailed content (at least 2 paragraphs per section), and key concepts highlighted
+  3. actionItems: 3-5 action items the student should follow up on after this lecture`;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: {
+      role: "user",
+      parts: [
+        { fileData: { fileUri: videoUrl, mimeType: "video/mp4" } },
+        { text: prompt }
+      ]
+    },
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          tldr: { type: Type.STRING },
+          sections: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                heading: { type: Type.STRING },
+                content: { type: Type.STRING },
+                keyConcepts: { type: Type.ARRAY, items: { type: Type.STRING } }
+              },
+              required: ["heading", "content", "keyConcepts"]
+            }
+          },
+          actionItems: { type: Type.ARRAY, items: { type: Type.STRING } }
+        },
+        required: ["tldr", "sections", "actionItems"]
+      }
+    }
+  });
+
+  return JSON.parse(response.text || '{}');
+};
+
 
 // ── Image Parsers ──
 export const parseTimetableImage = async (fileData: { data: string; mimeType: string }) => {

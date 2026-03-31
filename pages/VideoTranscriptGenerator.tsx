@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Youtube, Loader2, Sparkles, Trash2, BookOpen, ChevronDown, ChevronRight, Download, Copy, CheckCircle2, Zap } from 'lucide-react';
-import { generateTranscript } from '../src/services/geminiService';
+import { generateTranscript, generateNativeVideoTranscript } from '../src/services/geminiService';
 import { saveTranscriptDoc, getTranscripts, deleteTranscript } from '../src/services/firebase';
 import { auth } from '../src/services/firebase';
 import { useUser } from '../App';
@@ -31,6 +31,57 @@ const VideoTranscriptGenerator: React.FC = () => {
     }
   };
 
+  const extractYouTubeTranscript = async (url: string): Promise<string> => {
+    const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/);
+    const videoId = match ? match[1] : null;
+    if (!videoId) throw new Error("Could not parse a valid YouTube Video ID from the link.");
+
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.youtube.com/watch?v=' + videoId)}`;
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error("Failed to fetch video page via proxy.");
+    const data = await response.json();
+    const html = data.contents;
+
+    if (!html || !html.includes('ytInitialPlayerResponse')) {
+      throw new Error("Could not extract player metadata from YouTube page.");
+    }
+
+    try {
+      const jsonStart = html.split('ytInitialPlayerResponse = ')[1];
+      const jsonStr = jsonStart.split(';</script>')[0];
+      const playerResponse = JSON.parse(jsonStr);
+
+      const captions = playerResponse.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+      if (!captions || captions.length === 0) {
+        throw new Error("No captions/subtitles found for this video.");
+      }
+
+      // Prefer English, fallback to first available
+      const trackUrl = captions.find((t: any) => t.languageCode.startsWith('en'))?.baseUrl || captions[0].baseUrl;
+      
+      const transcriptProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(trackUrl)}`;
+      const transcriptRes = await fetch(transcriptProxy);
+      const transcriptData = await transcriptRes.json();
+      
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(transcriptData.contents, "text/xml");
+      const textNodes = xmlDoc.getElementsByTagName("text");
+      
+      let transcript = '';
+      for (let i = 0; i < textNodes.length; i++) {
+        // Decode HTML entities within the text
+        const decodedText = textNodes[i].textContent?.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"') || "";
+        transcript += decodedText + ' ';
+      }
+      
+      if (!transcript.trim()) throw new Error("Transcript extracted was empty.");
+      return transcript.trim();
+    } catch (e: any) {
+      console.error("Transcript parsing error:", e);
+      throw new Error(e.message || "Failed to parse transcript structure.");
+    }
+  };
+
   const handleGenerate = async () => {
     if (!videoUrl.trim()) {
       alert('Please provide a valid YouTube URL.');
@@ -40,21 +91,17 @@ const VideoTranscriptGenerator: React.FC = () => {
     setLoading(true);
     setResult(null);
     try {
-      setLoadingStatus('Fetching YouTube Transcript...');
-      
-      const res = await fetch(`/api/transcript?url=${encodeURIComponent(videoUrl)}`);
-      const data = await res.json();
-      
-      if (!res.ok || data.error) {
-        throw new Error(data.error || 'Failed to fetch transcript from YouTube.');
+      let aiRes;
+      try {
+        setLoadingStatus('Extracting Video Captions...');
+        const rawTranscriptText = await extractYouTubeTranscript(videoUrl);
+        setLoadingStatus('Analyzing Transcript Content...');
+        aiRes = await generateTranscript(rawTranscriptText, subject);
+      } catch (err: any) {
+        console.log("Caption extraction failed, falling back to Native AI Video processing:", err.message);
+        setLoadingStatus('Native AI Video Processing (This may take a minute so sit back!)...');
+        aiRes = await generateNativeVideoTranscript(videoUrl, subject);
       }
-      
-      if (!data.text) {
-        throw new Error('No transcript available for this video.');
-      }
-
-      setLoadingStatus('Structuring Lecture...');
-      const aiRes = await generateTranscript(data.text, subject);
 
       const transcript: SavedTranscript = {
         id: `vtrans_${Date.now()}`,
