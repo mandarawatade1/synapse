@@ -4,6 +4,7 @@ import { generateQuiz } from '../src/services/geminiService';
 import { saveQuizSession, getQuizHistory } from '../src/services/firebase';
 import { auth } from '../src/services/firebase';
 import { useUser } from '../App';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { QuizQuestion, QuizSession } from '../types';
 
 const QuizMaker: React.FC = () => {
@@ -25,12 +26,53 @@ const QuizMaker: React.FC = () => {
 
   const [history, setHistory] = useState<QuizSession[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const autoStarted = useRef(false);
+
+  useEffect(() => {
+    if (location.state?.autoStart && !autoStarted.current) {
+      autoStarted.current = true;
+      const stateTopic = location.state.topic || '';
+      const stateDiff = location.state.difficulty || 'Mixed';
+      const stateCount = location.state.count || 10;
+      
+      setTopic(stateTopic);
+      setDifficulty(stateDiff);
+      setCount(stateCount);
+      
+      const autoStartQuiz = async () => {
+        if (!stateTopic.trim()) return;
+        setPhase('loading');
+        try {
+          const qs = await generateQuiz(stateTopic, '', stateDiff, stateCount);
+          setQuestions(qs);
+          setCurrentQ(0);
+          setScore(0);
+          setAnswers(new Array(qs.length).fill(null));
+          setSelected(null);
+          setAnswered(false);
+          setPhase('taking');
+        } catch (err) {
+          console.error(err);
+          alert('Failed to generate quiz. Please try again.');
+          setPhase('input');
+        }
+      };
+      
+      autoStartQuiz();
+      
+      // Clean up state so refresh doesn't auto-start again
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     if (auth.currentUser) {
       getQuizHistory(auth.currentUser.uid).then(setHistory).catch(() => { });
     }
-  }, [phase]);
+  }, [phase, user]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -128,22 +170,29 @@ const QuizMaker: React.FC = () => {
         </button>
       </header>
 
-      {showHistory && history.length > 0 && (
+      {showHistory && (
         <div className="bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-3xl p-6 animate-in slide-in-from-top-4 duration-300">
           <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Past Quizzes</h3>
-          <div className="space-y-3 max-h-60 overflow-y-auto">
-            {history.map(h => (
-              <div key={h.id} className="flex justify-between items-center p-4 bg-gray-50 dark:bg-slate-800 rounded-2xl">
-                <div>
-                  <p className="font-bold dark:text-white">{h.topic}</p>
-                  <p className="text-xs text-gray-400">{h.difficulty} • {new Date(h.createdAt).toLocaleDateString()}</p>
+          {history.length > 0 ? (
+            <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
+              {history.map(h => (
+                <div key={h.id} className="flex justify-between items-center p-4 bg-gray-50 dark:bg-slate-800 rounded-2xl">
+                  <div>
+                    <p className="font-bold dark:text-white">{h.topic}</p>
+                    <p className="text-xs text-gray-400">{h.difficulty} • {new Date(h.createdAt).toLocaleDateString()}</p>
+                  </div>
+                  <div className={`text-lg font-black ${h.score / h.total >= 0.7 ? 'text-green-500' : h.score / h.total >= 0.4 ? 'text-yellow-500' : 'text-red-500'}`}>
+                    {h.score}/{h.total}
+                  </div>
                 </div>
-                <div className={`text-lg font-black ${h.score / h.total >= 0.7 ? 'text-green-500' : h.score / h.total >= 0.4 ? 'text-yellow-500' : 'text-red-500'}`}>
-                  {h.score}/{h.total}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-gray-500 dark:text-gray-400 font-medium tracking-tight">No past quizzes found.</p>
+              <p className="text-xs text-slate-400 mt-1">Take your first quiz to see it here!</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -166,10 +215,10 @@ const QuizMaker: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Difficulty</label>
-                <div className="flex gap-2">
-                  {['Easy', 'Medium', 'Hard'].map(d => (
+                <div className="grid grid-cols-2 gap-2">
+                  {['Mixed', 'Easy', 'Medium', 'Hard'].map(d => (
                     <button key={d} onClick={() => setDifficulty(d)}
-                      className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all border-2 ${difficulty === d
+                      className={`w-full py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all border-2 ${difficulty === d
                         ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300'
                         : 'border-transparent bg-gray-50 dark:bg-slate-800 text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700'
                         }`}

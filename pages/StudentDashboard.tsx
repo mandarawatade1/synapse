@@ -123,7 +123,7 @@ const StudentDashboard: React.FC = () => {
 
   const quickLinks = [
     { label: 'Take a Quiz', desc: 'Test your knowledge on any topic', icon: Brain, path: '/quiz', gradient: 'from-purple-500 to-indigo-600' },
-    { label: 'Analyze Scores', desc: 'Upload exam results for AI insights', icon: TrendingUp, path: '/performance', gradient: 'from-emerald-500 to-teal-600' },
+    { label: 'AI Flashcards', desc: 'Smart active recall with SRS', icon: Sparkles, path: '/flashcards', gradient: 'from-brand-500 to-indigo-600' },
     { label: 'Summarize Notes', desc: 'Get key points & exam questions', icon: BookOpen, path: '/notes', gradient: 'from-blue-500 to-cyan-600' },
     { label: 'Transcribe Lecture', desc: 'Structure any lecture content', icon: AudioLines, path: '/transcript', gradient: 'from-orange-500 to-red-500' },
   ];

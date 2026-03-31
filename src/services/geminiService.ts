@@ -423,9 +423,13 @@ export const generateQuiz = async (
     ? `\n\nThe student has provided the following notes as context — base your questions on this material:\n${noteText.substring(0, 8000)}`
     : '';
 
+  const diffInstruction = difficulty === 'Mixed'
+    ? 'with a balanced mix of Easy, Medium, and Hard difficulties'
+    : `at ${difficulty} difficulty level`;
+
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are an expert quiz generator. Generate exactly ${count} multiple-choice questions about "${topic}" at ${difficulty} difficulty level.${contextPart}
+    contents: `You are an expert quiz generator. Generate exactly ${count} multiple-choice questions about "${topic}" ${diffInstruction}.${contextPart}
 
     Each question MUST have exactly 4 options. The "correct" field is the 0-based index of the correct option.
     The "explanation" field should explain WHY the correct answer is right in 1-2 sentences.`,
@@ -760,3 +764,59 @@ export const generateOverallInterviewFeedback = async (
 
   return JSON.parse(aiResponse.text || '{"summary": "Unable to provide overall feedback.", "strengths": [], "weaknesses": [], "recommendation": "Check individual responses."}');
 };
+
+// ── Flashcard Generator ──
+export const generateFlashcards = async (
+  topic: string,
+  noteText: string = '',
+  count: number = 10
+): Promise<Flashcard[]> => {
+  const contextPart = noteText
+    ? `\n\nUse these notes to create the flashcards:\n${noteText.substring(0, 8000)}`
+    : '';
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `Generate exactly ${count} high-quality study flashcards about "${topic}". ${contextPart}
+    
+    Each flashcard should follow active recall principles:
+    - "front": A clear, concise question or term.
+    - "back": A direct, accurate answer.
+    - "explanation": (Optional) Additional context or memory tip.
+    
+    Return the cards as a JSON array of objects.
+    
+    Example:
+    [
+      { "front": "What is Mitochondria?", "back": "The powerhouse of the cell.", "explanation": "It generates most of the cell's supply of adenosine triphosphate (ATP)." }
+    ]`,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            front: { type: Type.STRING },
+            back: { type: Type.STRING },
+            explanation: { type: Type.STRING }
+          },
+          required: ["front", "back"]
+        }
+      }
+    }
+  });
+
+  const rawCards = JSON.parse(response.text || '[]');
+  return rawCards.map((card: any, index: number) => ({
+    id: `card_${Date.now()}_${index}`,
+    front: card.front,
+    back: card.back,
+    explanation: card.explanation || '',
+    interval: 0,
+    easeFactor: 2.5,
+    nextReview: new Date().toISOString(),
+    consecutiveCorrect: 0
+  }));
+};
+
