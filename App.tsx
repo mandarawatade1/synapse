@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, Youtube, ChevronDown } from 'lucide-react';
+import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, Youtube, ChevronDown, Sun, Moon } from 'lucide-react';
 import { UserProfile } from './types';
 import { auth, googleProvider, getUserProfile, saveUserProfile } from './src/services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { isAdmin } from './src/config/adminEmails';
+import { AnimatePresence } from 'framer-motion';
 
 // Pages
+import LoadingScreen from './src/components/LoadingScreen';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
@@ -30,7 +32,7 @@ import Flashcards from './pages/Flashcards';
 
 
 // Contexts
-const ThemeContext = createContext({ isDark: false, toggle: () => { } });
+const ThemeContext = createContext({ isDark: false, toggleTheme: () => { } });
 const SidebarContext = createContext({ isCollapsed: false, toggleSidebar: () => { } });
 const UserContext = createContext<{
   user: UserProfile | null,
@@ -51,7 +53,7 @@ export const useUser = () => useContext(UserContext);
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isDark } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const { user, logout } = useUser();
   const { isCollapsed, toggleSidebar } = useSidebar();
   const isActive = (path: string) => location.pathname === path;
@@ -158,7 +160,7 @@ const Sidebar = () => {
     <div
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`bg-white dark:bg-slate-900 border-r dark:border-slate-800 h-screen sticky top-0 flex flex-col overflow-hidden ${isHovered && isCollapsed ? 'absolute shadow-2xl z-50' : 'relative z-40'}`}
+      className={`bg-surface border-r border-border-subtle h-screen sticky top-0 flex flex-col overflow-hidden ${isHovered && isCollapsed ? 'absolute shadow-2xl z-50' : 'relative z-40'}`}
       style={{
         width: effectivelyCollapsed ? '80px' : '320px',
         minWidth: effectivelyCollapsed ? '80px' : '320px',
@@ -167,7 +169,7 @@ const Sidebar = () => {
     >
       {/* Logo + Toggle */}
       <div
-        className={`border-b dark:border-slate-800 flex ${effectivelyCollapsed ? 'flex-col items-center gap-3' : 'items-center justify-between'}`}
+        className={`border-b border-border-subtle flex ${effectivelyCollapsed ? 'flex-col items-center gap-3' : 'items-center justify-between'}`}
         style={{ padding: effectivelyCollapsed ? '20px 12px' : '32px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}
       >
         <Link to="/dashboard" className="flex items-center gap-3 group">
@@ -181,7 +183,7 @@ const Sidebar = () => {
 
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-xl text-gray-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 dark:hover:text-brand-400 transition-all duration-300 flex-shrink-0"
+          className="p-2 rounded-xl text-text-muted hover:text-brand-600 hover:bg-surface-hover transition-all duration-300 flex-shrink-0"
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={20} />}
@@ -217,17 +219,17 @@ const Sidebar = () => {
                   paddingRight: '16px',
                 }}
               >
-                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] group-hover/label:text-brand-400 transition-colors duration-200">
+                <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] group-hover/label:text-brand-400 transition-colors duration-200">
                   {group.label}
                 </span>
                 <ChevronDown
                   size={14}
-                  className={`text-gray-400 dark:text-gray-600 group-hover/label:text-brand-400 transition-all duration-300 ${expandedGroups[group.label] ? 'rotate-0' : '-rotate-90'}`}
+                  className={`text-text-muted group-hover/label:text-brand-400 transition-all duration-300 ${expandedGroups[group.label] ? 'rotate-0' : '-rotate-90'}`}
                 />
               </button>
             ) : (
               <p
-                className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] whitespace-nowrap overflow-hidden select-none"
+                className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap overflow-hidden select-none"
                 style={{
                   opacity: effectivelyCollapsed ? 0 : 1,
                   height: effectivelyCollapsed ? 0 : 'auto',
@@ -256,7 +258,7 @@ const Sidebar = () => {
                     to={item.path}
                     className={`relative flex items-center rounded-xl transition-all duration-300 overflow-hidden ${isActive(item.path)
                       ? 'text-brand-700 dark:text-brand-300 font-bold sidebar-active-item'
-                      : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800/60 hover:text-gray-900 dark:hover:text-white'
+                      : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
                       }`}
                     style={{
                       padding: effectivelyCollapsed ? '12px' : '12px 20px',
@@ -299,9 +301,9 @@ const Sidebar = () => {
                   {/* Clean Minimal Tooltip for collapsed edge cases */}
                   {effectivelyCollapsed && (
                     <div
-                      className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg opacity-0 invisible group-hover/navitem:opacity-100 group-hover/navitem:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-slate-700 pointer-events-none"
+                      className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface text-text-primary text-xs font-bold rounded-lg opacity-0 invisible group-hover/navitem:opacity-100 group-hover/navitem:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-border-subtle pointer-events-none"
                     >
-                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-800 rotate-45 border-l border-b border-slate-700" />
+                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-surface rotate-45 border-l border-b border-border-subtle" />
                       {item.label}
                     </div>
                   )}
@@ -313,10 +315,36 @@ const Sidebar = () => {
       </nav>
 
       {/* Bottom section */}
-      <div className="border-t dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50 mt-auto" style={{ padding: effectivelyCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <div className="border-t border-border-subtle bg-bg-base/50 mt-auto flex flex-col" style={{ padding: effectivelyCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)', gap: effectivelyCollapsed ? '12px' : '16px' }}>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="relative flex items-center rounded-2xl transition-all duration-300 overflow-hidden text-text-secondary hover:bg-surface-hover hover:text-text-primary border border-transparent hover:border-border-subtle"
+          style={{
+            padding: effectivelyCollapsed ? '12px' : '12px 16px',
+            justifyContent: effectivelyCollapsed ? 'center' : 'flex-start',
+            gap: effectivelyCollapsed ? '0' : '14px',
+          }}
+          title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {isDark ? <Sun size={20} className="flex-shrink-0" /> : <Moon size={20} className="flex-shrink-0" />}
+          
+          <span
+            className="text-sm font-bold tracking-wide whitespace-nowrap"
+            style={{
+              opacity: effectivelyCollapsed ? 0 : 1,
+              width: effectivelyCollapsed ? 0 : 'auto',
+              overflow: 'hidden',
+              transition: 'opacity 0.2s ease, width 0.3s ease',
+            }}
+          >
+            {isDark ? 'Light Mode' : 'Dark Mode'}
+          </span>
+        </button>
 
         {/* User card */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl border dark:border-slate-700 shadow-sm overflow-hidden" style={{ padding: effectivelyCollapsed ? '10px' : '16px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+        <div className="bg-surface rounded-3xl border border-border-subtle shadow-sm overflow-hidden" style={{ padding: effectivelyCollapsed ? '10px' : '16px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
           <div className="flex items-center overflow-hidden" style={{ gap: effectivelyCollapsed ? '0' : '12px', justifyContent: effectivelyCollapsed ? 'center' : 'flex-start', transition: 'gap 0.35s ease' }}>
             <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-300 flex-shrink-0 shadow-inner" title={effectivelyCollapsed ? (user?.name || 'Guest') : undefined}>
               {user?.avatar ? (
@@ -328,8 +356,8 @@ const Sidebar = () => {
             {!effectivelyCollapsed && (
               <>
                 <div className="truncate flex-1">
-                  <p className="text-sm font-black truncate dark:text-white tracking-tight">{user?.name || 'Guest'}</p>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{user?.targetRole || 'Explorer'}</p>
+                  <p className="text-sm font-black truncate text-text-primary tracking-tight">{user?.name || 'Guest'}</p>
+                  <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">{user?.targetRole || 'Explorer'}</p>
                 </div>
                 <button
                   onClick={() => { logout(); navigate('/'); }}
@@ -369,9 +397,14 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App: React.FC = () => {
-  const [isDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme-preference');
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('sidebar-collapsed') === 'true');
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const toggleSidebar = () => {
     setIsCollapsed(prev => {
@@ -380,11 +413,26 @@ const App: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev;
+      localStorage.setItem('theme-preference', next ? 'dark' : 'light');
+      return next;
+    });
+  };
 
   useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+
+  useEffect(() => {
+    // Determine a minimum time to show the loading screen (e.g. 2.2s)
+    const minLoadTime = new Promise(resolve => setTimeout(resolve, 2200));
+
     // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
@@ -406,6 +454,9 @@ const App: React.FC = () => {
       } else {
         setUser(null);
       }
+      
+      // Hide loading screen after minimum display time AND Firebase check resolves
+      minLoadTime.then(() => setIsInitialLoading(false));
     });
     return () => unsubscribe();
   }, []);
@@ -438,12 +489,15 @@ const App: React.FC = () => {
 
   return (
     <UserContext.Provider value={{ user, login, logout, updateProfile }}>
-      <ThemeContext.Provider value={{ isDark, toggle: () => { } }}>
+      <ThemeContext.Provider value={{ isDark, toggleTheme }}>
         <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
+          <AnimatePresence mode="wait">
+            {isInitialLoading && <LoadingScreen key="loading-screen" />}
+          </AnimatePresence>
           <Router>
-            <div className="flex min-h-screen transition-colors">
+            <div className="flex min-h-screen transition-colors bg-bg-base">
               <Sidebar />
-              <main className="flex-1 bg-gray-50 dark:bg-slate-950 overflow-auto scroll-smooth" style={{ transition: 'margin 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+              <main className="flex-1 bg-bg-base text-text-primary overflow-auto scroll-smooth" style={{ transition: 'margin 0.35s cubic-bezier(0.4, 0, 0.2, 1)', backgroundColor: 'var(--bg-base)' }}>
                 <Routes>
                   <Route path="/" element={<Landing />} />
                   <Route path="/login" element={<Login />} />

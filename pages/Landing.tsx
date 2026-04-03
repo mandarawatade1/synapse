@@ -17,26 +17,26 @@ const Landing: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="bg-white dark:bg-slate-950 transition-colors">
+    <div className="bg-bg-base transition-colors">
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border-b border-gray-100 dark:border-slate-800">
+      <nav className="fixed top-0 inset-x-0 z-50 bg-bg-base/70 backdrop-blur-md border-b border-border-subtle">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
 
           <Link to="/" className="flex items-center gap-2.5">
             <img src="/logo.png" className="w-10 h-10" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white font-logo">
+            <span className="text-xl font-bold text-text-primary font-logo">
               Synapse
             </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#news" className="text-sm font-semibold text-gray-600 dark:text-gray-300">News</a>
-            <a href="#contact" className="text-sm font-semibold text-gray-600 dark:text-gray-300">Contact</a>
+            <a href="#news" className="text-sm font-semibold text-text-secondary">News</a>
+            <a href="#contact" className="text-sm font-semibold text-text-secondary">Contact</a>
 
             <Link
               to="/login"
-              className="px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg text-sm font-bold"
+              className="px-5 py-2.5 bg-text-primary text-bg-base rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-shadow"
             >
               Log In
             </Link>
@@ -67,8 +67,8 @@ const Landing: React.FC = () => {
           />
         </div>
 
-        {/* Dark gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/40 to-slate-950/80 pointer-events-none z-[1]" />
+        {/* Semantic gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-base/70 via-bg-base/40 to-bg-base/80 pointer-events-none z-[1]" />
 
         {/* Ambient glow blobs */}
         <motion.div
@@ -93,11 +93,11 @@ const Landing: React.FC = () => {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8 shadow-lg"
           >
             <Sparkles size={14} className="text-purple-400" />
-            <span className="text-sm font-bold text-white/90 tracking-wide">AI-Powered Study Platform</span>
+            <span className="text-sm font-bold text-text-primary tracking-wide">AI-Powered Study Platform</span>
           </motion.div>
 
           {/* Main heading — word by word stagger */}
-          <div className="text-6xl md:text-7xl lg:text-9xl font-black text-white mb-8 leading-[0.95] tracking-tight">
+          <div className="text-6xl md:text-7xl lg:text-9xl font-black text-text-primary mb-8 leading-[0.95] tracking-tight">
             {['Study', 'Smarter'].map((word, i) => (
               <motion.span
                 key={i}
@@ -142,10 +142,10 @@ const Landing: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1.0 }}
-            className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-14 leading-relaxed font-medium"
+            className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-14 leading-relaxed font-medium"
           >
             Synapse generates quizzes, summarizes notes, analyzes performance,
-            and crafts <span className="text-white font-bold">personalized study plans</span> — all powered by AI
+            and crafts <span className="text-text-primary font-bold">personalized study plans</span> — all powered by AI
             <span className="inline-block w-[2px] h-[1.1em] bg-purple-400 ml-1 align-middle" style={{ animation: 'blink 1s step-end infinite' }} />
           </motion.p>
 
@@ -172,12 +172,12 @@ const Landing: React.FC = () => {
         </div>
 
         {/* Bottom gradient fade into next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none z-[2]" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-bg-base to-transparent pointer-events-none z-[2]" />
       </section>
 
 
       {/* PROBLEM + SOLUTION */}
-      <section className="py-32 relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 dark:from-slate-950 dark:via-[#0a0a1a] dark:to-slate-900 border-y dark:border-slate-800/50">
+      <section className="py-32 relative overflow-hidden bg-gradient-to-br from-bg-base via-surface to-bg-base/50 border-y border-border-subtle">
         
         {/* Glowing AI Feature Background */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
@@ -216,7 +216,7 @@ const Landing: React.FC = () => {
               initial={{ height: 0, opacity: 0 }}
               whileInView={{ height: '100%', opacity: 1 }}
               transition={{ duration: 1.5, ease: "circOut" }}
-              className="hidden lg:block absolute left-1/2 top-0 w-px bg-gradient-to-b from-transparent via-gray-300 dark:via-slate-700 to-transparent -translate-x-1/2"
+              className="hidden lg:block absolute left-1/2 top-0 w-px bg-gradient-to-b from-transparent via-border-subtle to-transparent -translate-x-1/2"
             />
 
             {/* PROBLEMS */}
@@ -232,15 +232,15 @@ const Landing: React.FC = () => {
             >
 
               <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-gray-200 dark:border-slate-700 mb-8 shadow-sm">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-md border border-border-subtle mb-8 shadow-sm">
                   <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-sm font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-bold uppercase tracking-widest text-text-secondary">
                     The Problem
                   </span>
                 </div>
 
                 {/* Animated gradient heading */}
-                <h2 className="text-5xl lg:text-6xl font-black mb-6 leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-indigo-800 to-gray-900 dark:from-white dark:via-indigo-300 dark:to-white" style={{ backgroundSize: '200% auto', animation: 'gradientMove 8s linear infinite' }}>
+                <h2 className="text-5xl lg:text-6xl font-black mb-6 leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-text-primary via-indigo-500 to-text-primary" style={{ backgroundSize: '200% auto', animation: 'gradientMove 8s linear infinite' }}>
                   The Study Struggle
                 </h2>
 
@@ -252,7 +252,7 @@ const Landing: React.FC = () => {
                   }
                 `}</style>
 
-                <p className="text-gray-500 dark:text-gray-400 text-xl leading-relaxed max-w-lg font-medium">
+                <p className="text-text-secondary text-xl leading-relaxed max-w-lg font-medium">
                   Most students cram before exams and struggle to organize
                   study material effectively. Synapse fixes that.
                 </p>
@@ -272,12 +272,12 @@ const Landing: React.FC = () => {
                       visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, type: "spring", bounce: 0.4 } }
                     }}
                     whileHover={{ scale: 1.03, y: -4, x: 8 }}
-                    className="group flex items-center gap-4 py-3 px-5 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-red-500/5 hover:border-red-200 dark:hover:border-red-900/50 transition-all duration-300 cursor-default"
+                    className="group flex items-center gap-4 py-3 px-5 bg-surface/80 backdrop-blur-xl rounded-xl border border-border-subtle shadow-sm hover:shadow-xl hover:shadow-red-500/5 hover:border-red-200 transition-all duration-300 cursor-default"
                   >
-                    <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white dark:bg-slate-800 rounded-lg border border-gray-100 dark:border-slate-700 shadow-md group-hover:bg-red-50 dark:group-hover:bg-red-500/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-bg-base rounded-lg border border-border-subtle shadow-md group-hover:bg-red-50 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                       <XCircle className="text-red-500 w-5 h-5" />
                     </div>
-                    <p className="font-semibold text-gray-700 dark:text-gray-300 text-base">
+                    <p className="font-semibold text-text-primary text-base">
                       {text}
                     </p>
                   </motion.div>
@@ -307,7 +307,7 @@ const Landing: React.FC = () => {
               <motion.div 
                 variants={{ hidden: { opacity: 0, y: 60, rotateX: 10 }, visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 1, type: "spring", bounce: 0.3 } } }}
                 style={{ perspective: 1000 }}
-                className="relative bg-white/60 dark:bg-slate-900/60 backdrop-blur-3xl p-8 md:p-12 rounded-[2.5rem] border border-white/80 dark:border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]"
+                className="relative bg-surface/60 backdrop-blur-3xl p-8 md:p-12 rounded-[2.5rem] border border-border-subtle shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)]"
               >
                 
                 <div className="flex items-center gap-5 mb-12">
@@ -318,7 +318,7 @@ const Landing: React.FC = () => {
                     <Shield className="text-white w-8 h-8" />
                   </motion.div>
                   <div>
-                    <h3 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">
+                    <h3 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-text-primary to-text-secondary">
                       Synapse Solution
                     </h3>
                   </div>
@@ -390,7 +390,7 @@ const Landing: React.FC = () => {
                         <p className={`font-black ${feature.titleClass} mb-2 tracking-wide text-sm`}>
                           {feature.title}
                         </p>
-                        <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed font-medium">
+                        <p className="text-text-secondary text-sm md:text-base leading-relaxed font-medium">
                           {feature.desc}
                         </p>
                       </div>
@@ -406,12 +406,12 @@ const Landing: React.FC = () => {
 
 
       {/* FOOTER */}
-      <footer className="py-20 border-t dark:border-slate-800">
+      <footer className="py-20 border-t border-border-subtle">
         <div className="container mx-auto px-6 text-center">
 
           <img src="/logo.png" className="w-10 mx-auto mb-6" />
 
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-text-secondary">
             © 2026 Synapse — Study smarter, not harder.
           </p>
 
