@@ -71,14 +71,20 @@ const GlobalUIOverlays = ({ isInitialLoading }: { isInitialLoading?: boolean }) 
   return (
     <>
       <DashboardHeader />
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pb-2 w-full">
-        <Dock
-          items={dockItems}
-          panelHeight={64}
-          baseItemSize={48}
-          magnification={72}
-          className="bg-white/70 dark:bg-[#0b0c10]/70 backdrop-blur-3xl shadow-xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.6)] border border-black/10 dark:border-white/10 rounded-3xl text-text-primary dark:text-white"
-        />
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] w-full md:w-[60%] h-8 group hover:h-32 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]">
+        {/* Subtle iOS-like home indicator when hidden */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 rounded-full border border-border-subtle bg-surface/50 backdrop-blur-md group-hover:opacity-0 transition-opacity duration-300"></div>
+        
+        {/* The Dock container slides up gracefully */}
+        <div className="absolute -bottom-32 left-0 w-full group-hover:bottom-4 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100">
+          <Dock
+            items={dockItems}
+            panelHeight={64}
+            baseItemSize={48}
+            magnification={72}
+            className="bg-white/70 dark:bg-[#0b0c10]/70 backdrop-blur-3xl shadow-2xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.6)] border border-black/10 dark:border-white/10 rounded-3xl text-text-primary dark:text-white"
+          />
+        </div>
       </div>
     </>
   );

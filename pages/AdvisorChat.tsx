@@ -345,7 +345,7 @@ const AdvisorChat: React.FC = () => {
         </div>
 
         {/* Input bar */}
-        <div className="border-t border-border-subtle bg-surface/90 backdrop-blur-md pb-[5.5rem]">
+        <div className="border-t border-border-subtle bg-surface/90 backdrop-blur-md pb-4 md:pb-6">
           <div className="max-w-4xl mx-auto px-6 pt-4 pb-2">
             <div className="flex items-center gap-3 bg-bg-base border border-border-subtle rounded-2xl px-4 py-1 focus-within:border-brand-500/40 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all shadow-sm">
               <button
