@@ -14,6 +14,7 @@ import Ballpit from '../src/components/Ballpit';
 import { motion } from 'framer-motion';
 import VariableProximity from '../src/components/VariableProximity';
 import TextType from '../src/components/TextType';
+import StaggeredMenu from '../src/components/StaggeredMenu';
 
 const Landing: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -23,34 +24,20 @@ const Landing: React.FC = () => {
     <div className="bg-bg-base transition-colors">
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-bg-base/70 backdrop-blur-md border-b border-border-subtle">
-        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-
-          <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo.png" className="w-10 h-10" />
-            <span className="text-xl font-bold text-text-primary font-logo">
+      <nav className="absolute top-0 inset-x-0 z-50 pointer-events-none">
+        <div className="container mx-auto px-6 h-28 flex items-center justify-between pointer-events-auto">
+          {/* Logo Section */}
+          <Link to="/" className="group flex items-center gap-3">
+            <div className="p-2 bg-surface/40 backdrop-blur-md rounded-xl border border-border-subtle shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <img src="/logo.png" className="w-8 h-8 drop-shadow-md" alt="Synapse" />
+            </div>
+            <span className="text-2xl font-bold text-text-primary font-logo drop-shadow-sm group-hover:text-brand-400 transition-colors duration-300">
               Synapse
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#news" className="text-sm font-semibold text-text-secondary">News</a>
-            <a href="#contact" className="text-sm font-semibold text-text-secondary">Contact</a>
-
-            <Link
-              to="/login"
-              className="px-5 py-2.5 bg-text-primary text-bg-base rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-shadow"
-            >
-              Log In
-            </Link>
-          </div>
-
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Staggered Navigation Menu */}
+          <StaggeredMenu accentColor="#c629ff" />
         </div>
       </nav>
 
