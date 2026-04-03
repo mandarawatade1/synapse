@@ -59,30 +59,30 @@ const GlobalUIOverlays = ({ isInitialLoading }: { isInitialLoading?: boolean }) 
   if (isInitialLoading || ['/', '/login', '/profile-setup'].includes(location.pathname)) return null;
 
   const dockItems = [
-    { label: 'Dashboard', icon: <Layout size={20} />, onClick: () => navigate('/dashboard') },
-    { label: 'Study Buddy', icon: <MessageSquare size={20} />, onClick: () => navigate('/advisor') },
-    { label: 'Notes', icon: <BookOpen size={20} />, onClick: () => navigate('/notes') },
-    { label: 'Quiz Maker', icon: <Brain size={20} />, onClick: () => navigate('/quiz') },
-    { label: 'Flashcards', icon: <Sparkles size={20} />, onClick: () => navigate('/flashcards') },
-    { label: 'Timetable', icon: <CalendarDays size={20} />, onClick: () => navigate('/timetable') },
-    { label: 'All Tools', icon: <Settings size={20} />, onClick: () => navigate('/tools') },
+    { label: 'Dashboard', icon: <Layout size={20} className="text-sky-500 dark:text-sky-400" />, className: "hover:shadow-[0_0_15px_rgba(14,165,233,0.3)] dark:hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:border-sky-500/30 transition-shadow transition-colors", onClick: () => navigate('/dashboard') },
+    { label: 'Study Buddy', icon: <MessageSquare size={20} className="text-indigo-500 dark:text-indigo-400" />, className: "hover:shadow-[0_0_15px_rgba(99,102,241,0.3)] dark:hover:shadow-[0_0_15px_rgba(129,140,248,0.3)] hover:border-indigo-500/30 transition-shadow transition-colors", onClick: () => navigate('/advisor') },
+    { label: 'Notes', icon: <BookOpen size={20} className="text-blue-500 dark:text-blue-400" />, className: "hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] dark:hover:shadow-[0_0_15px_rgba(96,165,250,0.3)] hover:border-blue-500/30 transition-shadow transition-colors", onClick: () => navigate('/notes') },
+    { label: 'Quiz Maker', icon: <Brain size={20} className="text-amber-500 dark:text-amber-400" />, className: "hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] dark:hover:shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:border-amber-500/30 transition-shadow transition-colors", onClick: () => navigate('/quiz') },
+    { label: 'Flashcards', icon: <Sparkles size={20} className="text-pink-500 dark:text-pink-400" />, className: "hover:shadow-[0_0_15px_rgba(236,72,153,0.3)] dark:hover:shadow-[0_0_15px_rgba(244,114,182,0.3)] hover:border-pink-500/30 transition-shadow transition-colors", onClick: () => navigate('/flashcards') },
+    { label: 'Timetable', icon: <CalendarDays size={20} className="text-emerald-500 dark:text-emerald-400" />, className: "hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] dark:hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] hover:border-emerald-500/30 transition-shadow transition-colors", onClick: () => navigate('/timetable') },
+    { label: 'All Tools', icon: <Settings size={20} className="text-slate-500 dark:text-slate-400" />, className: "hover:shadow-[0_0_15px_rgba(100,116,139,0.3)] dark:hover:shadow-[0_0_15px_rgba(148,163,184,0.3)] hover:border-slate-500/30 transition-shadow transition-colors", onClick: () => navigate('/tools') },
   ];
 
   return (
     <>
       <DashboardHeader />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] w-full md:w-[60%] h-8 group hover:h-32 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]">
-        {/* Subtle iOS-like home indicator when hidden */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 rounded-full border border-border-subtle bg-surface/50 backdrop-blur-md group-hover:opacity-0 transition-opacity duration-300"></div>
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] w-full md:w-[60%] h-12 md:h-8 group hover:h-40 flex justify-center pointer-events-auto">
+        {/* Subtle iOS-like home indicator—pulsing for extra discoverability on desktop */}
+        <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1.5 rounded-full border border-border-subtle bg-surface/80 backdrop-blur-md group-hover:opacity-0 transition-opacity duration-300 shadow-[0_0_10px_rgba(139,92,246,0.3)] animate-pulse"></div>
         
-        {/* The Dock container slides up gracefully */}
-        <div className="absolute -bottom-32 left-0 w-full group-hover:bottom-4 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100">
+        {/* Native feel: Solid on mobile, elegant spring reveal on desktop hovers */}
+        <div className="absolute bottom-4 md:-bottom-32 left-0 w-full md:group-hover:bottom-4 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] opacity-100 md:opacity-0 md:group-hover:opacity-100 flex justify-center pointer-events-auto">
           <Dock
             items={dockItems}
             panelHeight={64}
             baseItemSize={48}
             magnification={72}
-            className="bg-white/70 dark:bg-[#0b0c10]/70 backdrop-blur-3xl shadow-2xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.6)] border border-black/10 dark:border-white/10 rounded-3xl text-text-primary dark:text-white"
+            className="bg-white/70 dark:bg-[#0b0c10]/70 backdrop-blur-3xl shadow-2xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.6)] border border-black/10 dark:border-white/10 rounded-3xl text-text-primary dark:text-white pointer-events-auto shadow-brand-500/10 md:group-hover:shadow-brand-500/20"
           />
         </div>
       </div>
