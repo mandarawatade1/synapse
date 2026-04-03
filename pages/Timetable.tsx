@@ -136,7 +136,7 @@ const Timetable: React.FC = () => {
   const todayName = todayIdx >= 1 && todayIdx <= 6 ? DAYS[todayIdx - 1] : null;
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-6 md:p-10 xl:px-12 w-full max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500">
       <header>
         <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
           Timetable <span className="px-3 py-1 bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 text-sm font-black rounded-full uppercase tracking-widest">Schedule</span>

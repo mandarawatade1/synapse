@@ -27,7 +27,7 @@ export default function AllTools() {
   const groups = Array.from(new Set(allTools.map(t => t.group)));
 
   return (
-    <div className="p-8 pb-32 max-w-6xl mx-auto min-h-screen">
+    <div className="p-8 pb-32 max-w-[1600px] mx-auto min-h-screen">
       <div className="mb-10">
         <h1 className="text-3xl font-black text-text-primary mb-2">All Tools</h1>
         <p className="text-text-secondary">Explore all available Synapse features and resources.</p>

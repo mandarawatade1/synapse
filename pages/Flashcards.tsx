@@ -113,7 +113,7 @@ const Flashcards = () => {
 
   return (
     <div className="min-h-screen p-8 bg-bg-base text-text-primary font-sans transition-colors duration-300">
-      <div className="max-w-6xl mx-auto space-y-12">
+      <div className="max-w-[1600px] mx-auto space-y-12">
         
         {/* Header */}
         <div className="relative group">
