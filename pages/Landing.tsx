@@ -23,10 +23,9 @@ const Landing: React.FC = () => {
   return (
     <div className="bg-bg-base transition-colors">
 
-      {/* NAVBAR */}
-      <nav className="absolute top-0 inset-x-0 z-50 pointer-events-none">
-        <div className="container mx-auto px-6 h-28 flex items-center justify-between pointer-events-auto">
-          {/* Logo Section */}
+      {/* Separate Logo Container */}
+      <div className="absolute top-0 inset-x-0 z-[60] pointer-events-none">
+        <div className="container mx-auto px-6 h-28 flex items-center pointer-events-auto">
           <Link to="/" className="group flex items-center gap-3">
             <div className="p-2 bg-surface/40 backdrop-blur-md rounded-xl border border-border-subtle shadow-sm group-hover:scale-110 transition-transform duration-300">
               <img src="/logo.png" className="w-8 h-8 drop-shadow-md" alt="Synapse" />
@@ -35,11 +34,25 @@ const Landing: React.FC = () => {
               Synapse
             </span>
           </Link>
-
-          {/* Staggered Navigation Menu */}
-          <StaggeredMenu accentColor="#c629ff" />
         </div>
-      </nav>
+      </div>
+
+      {/* Staggered Navigation Menu exactly matching React Bits props */}
+      <StaggeredMenu
+        isFixed={true}
+        accentColor="#c629ff"
+        menuButtonColor="#9ca3af"
+        openMenuButtonColor="#000000"
+        displayItemNumbering={true}
+        className="z-[70]"
+        items={[
+          { label: 'News', link: '#news', ariaLabel: 'News section' },
+          { label: 'Contact', link: '#contact', ariaLabel: 'Contact us' },
+          { label: 'Log In', link: '#login', ariaLabel: 'Log in to your account' }
+        ]}
+        socialItems={[]}
+        displaySocials={false}
+      />
 
 
       {/* HERO */}
@@ -93,30 +106,30 @@ const Landing: React.FC = () => {
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <VariableProximity 
-                label="Study Smarter" 
-                fromFontVariationSettings="'wght' 400" 
-                toFontVariationSettings="'wght' 900" 
-                containerRef={containerRef} 
-                radius={110} 
-                falloff="gaussian" 
+              <VariableProximity
+                label="Study Smarter"
+                fromFontVariationSettings="'wght' 400"
+                toFontVariationSettings="'wght' 900"
+                containerRef={containerRef}
+                radius={110}
+                falloff="gaussian"
                 className="block"
               />
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="mt-2"
             >
-              <VariableProximity 
-                label="with AI Power" 
-                fromFontVariationSettings="'wght' 400" 
-                toFontVariationSettings="'wght' 900" 
-                containerRef={containerRef} 
-                radius={110} 
-                falloff="gaussian" 
+              <VariableProximity
+                label="with AI Power"
+                fromFontVariationSettings="'wght' 400"
+                toFontVariationSettings="'wght' 900"
+                containerRef={containerRef}
+                radius={110}
+                falloff="gaussian"
                 className="inline-block bg-gradient-to-r from-purple-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent pb-3"
                 style={{ backgroundSize: '200% auto', animation: 'gradientShift 4s ease-in-out infinite' }}
               />
@@ -132,7 +145,7 @@ const Landing: React.FC = () => {
 
           {/* Subtitle with TextType animation */}
           <div className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-14 leading-relaxed font-medium min-h-[4rem]">
-            <TextType 
+            <TextType
               speed={20}
               delay={1200}
               segments={[
@@ -173,41 +186,41 @@ const Landing: React.FC = () => {
 
       {/* PROBLEM + SOLUTION */}
       <section className="py-32 relative overflow-hidden bg-gradient-to-br from-bg-base via-surface to-bg-base/50 border-y border-border-subtle">
-        
+
         {/* Glowing AI Feature Background */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-          <motion.div 
-            animate={{ 
+          <motion.div
+            animate={{
               scale: [1, 1.2, 1],
               opacity: [0.3, 0.5, 0.3],
             }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-[20%] -left-[10%] w-[50rem] h-[50rem] bg-indigo-500/10 dark:bg-indigo-500/10 rounded-full blur-[120px]" 
+            className="absolute -top-[20%] -left-[10%] w-[50rem] h-[50rem] bg-indigo-500/10 dark:bg-indigo-500/10 rounded-full blur-[120px]"
           />
-          <motion.div 
-            animate={{ 
+          <motion.div
+            animate={{
               scale: [1, 1.3, 1],
               opacity: [0.2, 0.4, 0.2],
             }}
             transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute top-[30%] -right-[20%] w-[60rem] h-[60rem] bg-purple-500/10 dark:bg-purple-500/10 rounded-full blur-[150px]" 
+            className="absolute top-[30%] -right-[20%] w-[60rem] h-[60rem] bg-purple-500/10 dark:bg-purple-500/10 rounded-full blur-[150px]"
           />
-           <motion.div 
-            animate={{ 
+          <motion.div
+            animate={{
               scale: [1, 1.1, 1],
               y: [0, -50, 0],
             }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-0 left-[20%] w-[40rem] h-[30rem] bg-brand-400/10 dark:bg-brand-500/10 rounded-full blur-[100px]" 
+            className="absolute bottom-0 left-[20%] w-[40rem] h-[30rem] bg-brand-400/10 dark:bg-brand-500/10 rounded-full blur-[100px]"
           />
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          
+
           <div className="relative grid lg:grid-cols-[1fr_minmax(0,1fr)] gap-16 lg:gap-32 items-center">
-            
+
             {/* Vertical Divider */}
-            <motion.div 
+            <motion.div
               initial={{ height: 0, opacity: 0 }}
               whileInView={{ height: '100%', opacity: 1 }}
               transition={{ duration: 1.5, ease: "circOut" }}
@@ -293,20 +306,20 @@ const Landing: React.FC = () => {
               className="relative pl-0 lg:pl-8"
             >
               {/* Strengthened decorative background glow */}
-              <motion.div 
+              <motion.div
                 animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.05, 1] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -inset-16 bg-gradient-to-tr from-brand-500 via-indigo-500 to-cyan-400 opacity-40 dark:opacity-50 blur-[100px] rounded-[4rem] pointer-events-none"
               ></motion.div>
 
-              <motion.div 
+              <motion.div
                 variants={{ hidden: { opacity: 0, y: 60, rotateX: 10 }, visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 1, type: "spring", bounce: 0.3 } } }}
                 style={{ perspective: 1000 }}
                 className="relative bg-surface/60 backdrop-blur-3xl p-8 md:p-12 rounded-[2.5rem] border border-border-subtle shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)]"
               >
-                
+
                 <div className="flex items-center gap-5 mb-12">
-                  <motion.div 
+                  <motion.div
                     whileHover={{ rotate: 10, scale: 1.1 }}
                     className="p-4 bg-gradient-to-tr from-brand-600 to-indigo-500 rounded-2xl shadow-xl shadow-brand-500/40"
                   >
@@ -360,9 +373,9 @@ const Landing: React.FC = () => {
                     >
                       <div className={`shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl border shadow-sm group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 relative ${feature.iconBg}`}>
                         {feature.icon}
-                        
+
                         {/* Apple-style Animated Checkmark */}
-                        <motion.div 
+                        <motion.div
                           className="absolute -bottom-2 -right-2 bg-green-500 rounded-full w-7 h-7 flex items-center justify-center border-[3px] border-white dark:border-slate-900 shadow-lg"
                           initial={{ scale: 0, opacity: 0 }}
                           whileInView={{ scale: [0, 1.2, 1], opacity: 1 }}
@@ -370,8 +383,8 @@ const Landing: React.FC = () => {
                           transition={{ delay: i * 0.3 + 1, duration: 0.5, type: "spring", stiffness: 200, damping: 12 }}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-                            <motion.path 
-                              d="M20 6L9 17l-5-5" 
+                            <motion.path
+                              d="M20 6L9 17l-5-5"
                               initial={{ pathLength: 0 }}
                               whileInView={{ pathLength: 1 }}
                               viewport={{ once: true }}
