@@ -163,7 +163,7 @@ const StudentDashboard: React.FC = () => {
   });
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto flex flex-col gap-6 animate-in fade-in duration-500 text-text-primary">
+    <div className="p-6 pb-32 md:p-10 md:pb-36 max-w-7xl mx-auto flex flex-col gap-6 animate-in fade-in duration-500 text-text-primary">
 
       {/* Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -174,10 +174,6 @@ const StudentDashboard: React.FC = () => {
           <p className="text-text-secondary font-medium mt-1">
             Here's your study dashboard. Let's make today count.
           </p>
-        </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-surface border border-border-subtle rounded-full shadow-sm">
-          <Sparkles size={14} className="text-brand-600 dark:text-brand-400" />
-          <span className="text-sm font-bold text-text-secondary">Synapse AI</span>
         </div>
       </header>
 

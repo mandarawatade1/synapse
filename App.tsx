@@ -29,11 +29,13 @@ import PomodoroTimer from './pages/PomodoroTimer';
 import Timetable from './pages/Timetable';
 import InterviewPrep from './pages/InterviewPrep';
 import Flashcards from './pages/Flashcards';
+import AllTools from './pages/AllTools';
+import Dock from './src/components/Dock';
+import DashboardHeader from './src/components/DashboardHeader';
 
 
 // Contexts
 const ThemeContext = createContext({ isDark: false, toggleTheme: () => { } });
-const SidebarContext = createContext({ isCollapsed: false, toggleSidebar: () => { } });
 const UserContext = createContext<{
   user: UserProfile | null,
   login: (u?: UserProfile) => void,
@@ -47,337 +49,38 @@ const UserContext = createContext<{
 });
 
 export const useTheme = () => useContext(ThemeContext);
-export const useSidebar = () => useContext(SidebarContext);
 export const useUser = () => useContext(UserContext);
 
-const Sidebar = () => {
+const GlobalUIOverlays = ({ isInitialLoading }: { isInitialLoading?: boolean }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isDark, toggleTheme } = useTheme();
-  const { user, logout } = useUser();
-  const { isCollapsed, toggleSidebar } = useSidebar();
-  const isActive = (path: string) => location.pathname === path;
 
-  // Hover-to-expand state
-  const [isHovered, setIsHovered] = useState(false);
-  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  // Hide Dock and TopNav while loading or on auth/marketing pages
+  if (isInitialLoading || ['/', '/login', '/profile-setup'].includes(location.pathname)) return null;
 
-  const handleMouseEnter = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsHovered(true);
-    }, 300); // 300ms delay to allow quick tooltips without full expansion
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setIsHovered(false);
-  };
-
-  const effectivelyCollapsed = isCollapsed && !isHovered;
-
-  // Collapsible section state — persisted in localStorage
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
-    const saved = localStorage.getItem('sidebar-expanded-groups');
-    return saved ? JSON.parse(saved) : { OVERVIEW: true, TOOLS: true, TRACK: true, BUILD: true, ADMIN: true };
-  });
-
-  // Auto-expand the group that contains the active route
-  useEffect(() => {
-    const allGroups = [
-      { label: 'TOOLS', paths: ['/advisor', '/quiz', '/notes', '/flashcards', '/transcript', '/video-transcript', '/timer'] },
-      { label: 'TRACK', paths: ['/performance', '/gpa', '/timetable'] },
-      { label: 'BUILD', paths: ['/planner', '/roadmap', '/resume', '/interview'] },
-    ];
-    for (const g of allGroups) {
-      if (g.paths.includes(location.pathname) && !expandedGroups[g.label]) {
-        setExpandedGroups(prev => {
-          const next = { ...prev, [g.label]: true };
-          localStorage.setItem('sidebar-expanded-groups', JSON.stringify(next));
-          return next;
-        });
-      }
-    }
-  }, [location.pathname]);
-
-  const toggleGroup = (label: string) => {
-    setExpandedGroups(prev => {
-      const next = { ...prev, [label]: !prev[label] };
-      localStorage.setItem('sidebar-expanded-groups', JSON.stringify(next));
-      return next;
-    });
-  };
-
-  const isCollapsibleGroup = (label: string) => ['TOOLS', 'TRACK', 'BUILD'].includes(label);
-
-  const navGroups = [
-    {
-      label: 'OVERVIEW',
-      items: [
-        { path: '/dashboard', icon: Layout, label: 'Dashboard' },
-      ],
-    },
-    {
-      label: 'TOOLS',
-      items: [
-        { path: '/advisor', icon: MessageSquare, label: 'Study Buddy' },
-        { path: '/quiz', icon: Brain, label: 'Quiz Maker' },
-        { path: '/notes', icon: BookOpen, label: 'Notes' },
-        { path: '/flashcards', icon: Sparkles, label: 'Flashcards (SRS)' },
-        { path: '/transcript', icon: AudioLines, label: 'Transcripts' },
-        { path: '/video-transcript', icon: Youtube, label: 'Video Transcript' },
-        { path: '/timer', icon: Timer, label: 'Focus Timer' },
-      ],
-    },
-    {
-      label: 'TRACK',
-      items: [
-        { path: '/performance', icon: TrendingUp, label: 'Performance' },
-        { path: '/gpa', icon: Calculator, label: 'GPA Calculator' },
-        { path: '/timetable', icon: CalendarDays, label: 'Timetable' },
-      ],
-    },
-    {
-      label: 'BUILD',
-      items: [
-        { path: '/planner', icon: Settings, label: 'Exam Prep' },
-        { path: '/roadmap', icon: Map, label: 'Skill Roadmap' },
-        { path: '/resume', icon: FileText, label: 'Resume Builder' },
-        { path: '/interview', icon: MessageSquare, label: 'Interview Prep' },
-      ],
-    },
+  const dockItems = [
+    { label: 'Dashboard', icon: <Layout size={20} />, onClick: () => navigate('/dashboard') },
+    { label: 'Study Buddy', icon: <MessageSquare size={20} />, onClick: () => navigate('/advisor') },
+    { label: 'Notes', icon: <BookOpen size={20} />, onClick: () => navigate('/notes') },
+    { label: 'Quiz Maker', icon: <Brain size={20} />, onClick: () => navigate('/quiz') },
+    { label: 'Flashcards', icon: <Sparkles size={20} />, onClick: () => navigate('/flashcards') },
+    { label: 'Timetable', icon: <CalendarDays size={20} />, onClick: () => navigate('/timetable') },
+    { label: 'All Tools', icon: <Settings size={20} />, onClick: () => navigate('/tools') },
   ];
 
-  if (user && isAdmin(user.email)) {
-    navGroups.push({
-      label: 'ADMIN',
-      items: [{ path: '/admin', icon: BarChart, label: 'Admin Panel' }],
-    });
-  }
-
-  if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/profile-setup') return null;
-
   return (
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`bg-surface border-r border-border-subtle h-screen sticky top-0 flex flex-col overflow-hidden ${isHovered && isCollapsed ? 'absolute shadow-2xl z-50' : 'relative z-40'}`}
-      style={{
-        width: effectivelyCollapsed ? '80px' : '320px',
-        minWidth: effectivelyCollapsed ? '80px' : '320px',
-        transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-      }}
-    >
-      {/* Logo + Toggle */}
-      <div
-        className={`border-b border-border-subtle flex ${effectivelyCollapsed ? 'flex-col items-center gap-3' : 'items-center justify-between'}`}
-        style={{ padding: effectivelyCollapsed ? '20px 12px' : '32px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}
-      >
-        <Link to="/dashboard" className="flex items-center gap-3 group">
-          <img src="/logo.png" alt="Synapse Logo" className={`${effectivelyCollapsed ? 'w-10 h-10' : 'w-12 h-12'} object-contain flex-shrink-0 group-hover:scale-110 transition-all duration-300 drop-shadow-md`} />
-          {!effectivelyCollapsed && (
-            <span className="text-3xl font-black text-brand-600 dark:text-brand-400 font-logo whitespace-nowrap">
-              Synapse
-            </span>
-          )}
-        </Link>
-
-        <button
-          onClick={toggleSidebar}
-          className="p-2 rounded-xl text-text-muted hover:text-brand-600 hover:bg-surface-hover transition-all duration-300 flex-shrink-0"
-          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {isCollapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={20} />}
-        </button>
+    <>
+      <DashboardHeader />
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pb-2 w-full">
+        <Dock
+          items={dockItems}
+          panelHeight={64}
+          baseItemSize={48}
+          magnification={72}
+          className="bg-white/70 dark:bg-[#0b0c10]/70 backdrop-blur-3xl shadow-xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.6)] border border-black/10 dark:border-white/10 rounded-3xl text-text-primary dark:text-white"
+        />
       </div>
-
-      {/* Nav items */}
-      <nav className="flex-1 overflow-y-auto custom-scrollbar" style={{ padding: effectivelyCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-        {navGroups.map((group, groupIndex) => (
-          <div key={group.label}>
-            {/* Group separator line (between groups, not before the first) */}
-            {groupIndex > 0 && (
-              <div
-                className="mx-auto my-3"
-                style={{
-                  width: effectivelyCollapsed ? '32px' : 'calc(100% - 48px)',
-                  height: '1px',
-                  background: 'linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.15), transparent)',
-                  transition: 'width 0.35s ease',
-                }}
-              />
-            )}
-
-            {/* Group label — clickable toggle for collapsible groups */}
-            {isCollapsibleGroup(group.label) && !effectivelyCollapsed ? (
-              <button
-                onClick={() => toggleGroup(group.label)}
-                className="w-full flex items-center justify-between cursor-pointer select-none group/label"
-                style={{
-                  marginBottom: '8px',
-                  marginTop: groupIndex === 0 ? '0' : '12px',
-                  paddingLeft: '16px',
-                  paddingRight: '16px',
-                }}
-              >
-                <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] group-hover/label:text-brand-400 transition-colors duration-200">
-                  {group.label}
-                </span>
-                <ChevronDown
-                  size={14}
-                  className={`text-text-muted group-hover/label:text-brand-400 transition-all duration-300 ${expandedGroups[group.label] ? 'rotate-0' : '-rotate-90'}`}
-                />
-              </button>
-            ) : (
-              <p
-                className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap overflow-hidden select-none"
-                style={{
-                  opacity: effectivelyCollapsed ? 0 : 1,
-                  height: effectivelyCollapsed ? 0 : 'auto',
-                  marginBottom: effectivelyCollapsed ? 0 : '8px',
-                  marginTop: effectivelyCollapsed ? 0 : (groupIndex === 0 ? '0' : '12px'),
-                  marginLeft: effectivelyCollapsed ? 0 : '16px',
-                  transition: 'opacity 0.2s ease, height 0.3s ease, margin 0.3s ease',
-                }}
-              >
-                {group.label}
-              </p>
-            )}
-
-            {/* Group items — with collapse animation */}
-            <div
-              className="space-y-1 overflow-hidden"
-              style={{
-                maxHeight: (!isCollapsibleGroup(group.label) || expandedGroups[group.label]) ? `${group.items.length * 52}px` : '0px',
-                opacity: (!isCollapsibleGroup(group.label) || expandedGroups[group.label]) ? 1 : 0,
-                transition: 'max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease',
-              }}
-            >
-              {group.items.map((item) => (
-                <div key={item.path} className="relative group/navitem">
-                  <Link
-                    to={item.path}
-                    className={`relative flex items-center rounded-xl transition-all duration-300 overflow-hidden ${isActive(item.path)
-                      ? 'text-brand-700 dark:text-brand-300 font-bold sidebar-active-item'
-                      : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
-                      }`}
-                    style={{
-                      padding: effectivelyCollapsed ? '12px' : '12px 20px',
-                      justifyContent: effectivelyCollapsed ? 'center' : 'flex-start',
-                      gap: effectivelyCollapsed ? '0' : '16px',
-                      background: isActive(item.path)
-                        ? 'linear-gradient(90deg, rgba(124,58,237,0.18) 0%, rgba(139,92,246,0.08) 40%, transparent 100%)'
-                        : undefined,
-                      transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1), gap 0.35s ease, background 0.3s ease',
-                    }}
-                  >
-                    {/* Left accent bar for active item */}
-                    <div
-                      className="absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full"
-                      style={{
-                        width: isActive(item.path) ? '3px' : '0px',
-                        height: isActive(item.path) ? '60%' : '0%',
-                        background: 'linear-gradient(180deg, #a78bfa, #7c3aed)',
-                        boxShadow: isActive(item.path) ? '0 0 12px 2px rgba(124,58,237,0.5)' : 'none',
-                        transition: 'width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease',
-                      }}
-                    />
-                    <item.icon
-                      size={22}
-                      className={`flex-shrink-0 transition-transform duration-300 ${isActive(item.path) ? 'scale-110' : 'group-hover/navitem:scale-110 group-hover/navitem:rotate-3'}`}
-                    />
-                    <span
-                      className="text-sm tracking-wide whitespace-nowrap"
-                      style={{
-                        opacity: effectivelyCollapsed ? 0 : 1,
-                        width: effectivelyCollapsed ? 0 : 'auto',
-                        overflow: 'hidden',
-                        transition: 'opacity 0.2s ease, width 0.3s ease',
-                      }}
-                    >
-                      {item.label}
-                    </span>
-                  </Link>
-
-                  {/* Clean Minimal Tooltip for collapsed edge cases */}
-                  {effectivelyCollapsed && (
-                    <div
-                      className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface text-text-primary text-xs font-bold rounded-lg opacity-0 invisible group-hover/navitem:opacity-100 group-hover/navitem:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-border-subtle pointer-events-none"
-                    >
-                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-surface rotate-45 border-l border-b border-border-subtle" />
-                      {item.label}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      {/* Bottom section */}
-      <div className="border-t border-border-subtle bg-bg-base/50 mt-auto flex flex-col" style={{ padding: effectivelyCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)', gap: effectivelyCollapsed ? '12px' : '16px' }}>
-
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="relative flex items-center rounded-2xl transition-all duration-300 overflow-hidden text-text-secondary hover:bg-surface-hover hover:text-text-primary border border-transparent hover:border-border-subtle"
-          style={{
-            padding: effectivelyCollapsed ? '12px' : '12px 16px',
-            justifyContent: effectivelyCollapsed ? 'center' : 'flex-start',
-            gap: effectivelyCollapsed ? '0' : '14px',
-          }}
-          title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          {isDark ? <Sun size={20} className="flex-shrink-0" /> : <Moon size={20} className="flex-shrink-0" />}
-          
-          <span
-            className="text-sm font-bold tracking-wide whitespace-nowrap"
-            style={{
-              opacity: effectivelyCollapsed ? 0 : 1,
-              width: effectivelyCollapsed ? 0 : 'auto',
-              overflow: 'hidden',
-              transition: 'opacity 0.2s ease, width 0.3s ease',
-            }}
-          >
-            {isDark ? 'Light Mode' : 'Dark Mode'}
-          </span>
-        </button>
-
-        {/* User card */}
-        <div className="bg-surface rounded-3xl border border-border-subtle shadow-sm overflow-hidden" style={{ padding: effectivelyCollapsed ? '10px' : '16px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-          <div className="flex items-center overflow-hidden" style={{ gap: effectivelyCollapsed ? '0' : '12px', justifyContent: effectivelyCollapsed ? 'center' : 'flex-start', transition: 'gap 0.35s ease' }}>
-            <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-300 flex-shrink-0 shadow-inner" title={effectivelyCollapsed ? (user?.name || 'Guest') : undefined}>
-              {user?.avatar ? (
-                <img src={user.avatar} className="w-full h-full object-cover rounded-2xl" referrerPolicy="no-referrer" />
-              ) : (
-                <UserIcon size={20} />
-              )}
-            </div>
-            {!effectivelyCollapsed && (
-              <>
-                <div className="truncate flex-1">
-                  <p className="text-sm font-black truncate text-text-primary tracking-tight">{user?.name || 'Guest'}</p>
-                  <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">{user?.targetRole || 'Explorer'}</p>
-                </div>
-                <button
-                  onClick={() => { logout(); navigate('/'); }}
-                  className="p-2 text-gray-300 hover:text-red-500 transition-colors flex-shrink-0"
-                >
-                  <LogOut size={18} />
-                </button>
-              </>
-            )}
-          </div>
-
-          {user?.targetRole && !effectivelyCollapsed && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg mt-3 ai-badge-glow">
-              <Sparkles size={12} className="text-brand-400 ai-badge-sparkle" />
-              <span className="text-[10px] font-black text-brand-300 uppercase tracking-tighter">AI Optimized</span>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
@@ -403,15 +106,7 @@ const App: React.FC = () => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('sidebar-collapsed') === 'true');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(prev => {
-      localStorage.setItem('sidebar-collapsed', String(!prev));
-      return !prev;
-    });
-  };
 
   const toggleTheme = () => {
     setIsDark(prev => {
@@ -490,14 +185,13 @@ const App: React.FC = () => {
   return (
     <UserContext.Provider value={{ user, login, logout, updateProfile }}>
       <ThemeContext.Provider value={{ isDark, toggleTheme }}>
-        <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
-          <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait">
             {isInitialLoading && <LoadingScreen key="loading-screen" />}
           </AnimatePresence>
           <Router>
-            <div className="flex min-h-screen transition-colors bg-bg-base">
-              <Sidebar />
-              <main className="flex-1 bg-bg-base text-text-primary overflow-auto scroll-smooth" style={{ transition: 'margin 0.35s cubic-bezier(0.4, 0, 0.2, 1)', backgroundColor: 'var(--bg-base)' }}>
+            <div className="relative min-h-screen transition-colors bg-bg-base overflow-x-hidden flex flex-col">
+              <GlobalUIOverlays isInitialLoading={isInitialLoading} />
+              <main className="flex-1 w-full bg-bg-base text-text-primary overflow-auto scroll-smooth pb-32" style={{ backgroundColor: 'var(--bg-base)' }}>
                 <Routes>
                   <Route path="/" element={<Landing />} />
                   <Route path="/login" element={<Login />} />
@@ -518,12 +212,12 @@ const App: React.FC = () => {
                   <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
                   <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
                   <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
+                  <Route path="/tools" element={<ProtectedRoute><AllTools /></ProtectedRoute>} />
                   <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
                 </Routes>
               </main>
             </div>
           </Router>
-        </SidebarContext.Provider>
       </ThemeContext.Provider>
     </UserContext.Provider>
   );
