@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   XCircle,
@@ -12,9 +12,12 @@ import {
 } from 'lucide-react';
 import Ballpit from '../src/components/Ballpit';
 import { motion } from 'framer-motion';
+import VariableProximity from '../src/components/VariableProximity';
+import TextType from '../src/components/TextType';
 
 const Landing: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="bg-bg-base transition-colors">
@@ -96,34 +99,41 @@ const Landing: React.FC = () => {
             <span className="text-sm font-bold text-text-primary tracking-wide">AI-Powered Study Platform</span>
           </motion.div>
 
-          {/* Main heading — word by word stagger */}
-          <div className="text-6xl md:text-7xl lg:text-9xl font-black text-text-primary mb-8 leading-[0.95] tracking-tight">
-            {['Study', 'Smarter'].map((word, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 0.7, delay: 0.3 + i * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="inline-block mr-[0.25em]"
-              >
-                {word}
-              </motion.span>
-            ))}
-            <br />
-            <span className="relative inline-block">
-              {['with', 'AI', 'Power'].map((word, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.7, delay: 0.6 + i * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="inline-block mr-[0.25em] bg-gradient-to-r from-purple-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent"
-                  style={{ backgroundSize: '200% auto', animation: 'gradientShift 4s ease-in-out infinite' }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </span>
+          {/* Main heading — interactive variable font proximity */}
+          <div className="text-[min(10vw,6rem)] md:text-[min(8vw,7rem)] lg:text-9xl text-text-primary mb-8 leading-[1.05] tracking-tight cursor-default max-w-full" ref={containerRef}>
+            <motion.div
+              initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <VariableProximity 
+                label="Study Smarter" 
+                fromFontVariationSettings="'wght' 400" 
+                toFontVariationSettings="'wght' 900" 
+                containerRef={containerRef} 
+                radius={110} 
+                falloff="gaussian" 
+                className="block"
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="mt-2"
+            >
+              <VariableProximity 
+                label="with AI Power" 
+                fromFontVariationSettings="'wght' 400" 
+                toFontVariationSettings="'wght' 900" 
+                containerRef={containerRef} 
+                radius={110} 
+                falloff="gaussian" 
+                className="inline-block bg-gradient-to-r from-purple-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent pb-3"
+                style={{ backgroundSize: '200% auto', animation: 'gradientShift 4s ease-in-out infinite' }}
+              />
+            </motion.div>
           </div>
 
           <style>{`
@@ -131,23 +141,21 @@ const Landing: React.FC = () => {
               0%, 100% { background-position: 0% 50%; }
               50% { background-position: 100% 50%; }
             }
-            @keyframes blink {
-              0%, 100% { opacity: 1; }
-              50% { opacity: 0; }
-            }
           `}</style>
 
-          {/* Subtitle with fade-up */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.0 }}
-            className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-14 leading-relaxed font-medium"
-          >
-            Synapse generates quizzes, summarizes notes, analyzes performance,
-            and crafts <span className="text-text-primary font-bold">personalized study plans</span> — all powered by AI
-            <span className="inline-block w-[2px] h-[1.1em] bg-purple-400 ml-1 align-middle" style={{ animation: 'blink 1s step-end infinite' }} />
-          </motion.p>
+          {/* Subtitle with TextType animation */}
+          <div className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-14 leading-relaxed font-medium min-h-[4rem]">
+            <TextType 
+              speed={20}
+              delay={1200}
+              segments={[
+                "Synapse generates quizzes, summarizes notes, analyzes performance, and crafts ",
+                { text: "personalized study plans", className: "text-text-primary font-bold" },
+                " — all powered by AI"
+              ]}
+              showCursor={true}
+            />
+          </div>
 
           {/* CTA button */}
           <motion.div
