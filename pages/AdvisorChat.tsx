@@ -215,7 +215,7 @@ const AdvisorChat: React.FC = () => {
       {/* ── Main Chat Area ── */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="px-6 py-4 flex items-center justify-between sticky top-0 z-20 chat-header-glass border-b border-border-subtle bg-surface/80">
+        <header className="px-6 py-4 flex items-center justify-between sticky top-0 z-20 bg-surface/80 backdrop-blur-xl shadow-sm border-b border-border-subtle">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -228,29 +228,33 @@ const AdvisorChat: React.FC = () => {
               <Bot size={24} />
             </div>
             <div>
-              <h1 className="font-bold text-lg text-text-primary">Study Buddy</h1>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                <h1 className="font-bold text-lg text-text-primary">Study Buddy</h1>
+                <div className="flex items-center gap-1 border-l border-border-subtle pl-3 ml-1">
+                  <button
+                    onClick={() => { createNewSession(); }}
+                    className="p-1.5 rounded-lg text-text-muted hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-500/10 transition-all"
+                    title="New chat"
+                  >
+                    <Plus size={16} />
+                  </button>
+                  <button
+                    onClick={clearChat}
+                    className="p-1.5 rounded-lg text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-all"
+                    title="Delete chat"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mt-0.5">
                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-sm shadow-emerald-500/50"></span>
                 <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-[0.15em]">Ready to help you learn</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => { createNewSession(); }}
-              className="p-2.5 rounded-xl text-text-muted hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-500/10 transition-all"
-              title="New chat"
-            >
-              <Plus size={20} />
-            </button>
-            <button
-              onClick={clearChat}
-              className="p-2.5 rounded-xl text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-all"
-              title="Delete chat"
-            >
-              <Trash2 size={18} />
-            </button>
-          </div>
+          {/* Right side left empty to clear global DashboardHeader */}
+          <div></div>
         </header>
 
         {/* Messages */}
@@ -341,8 +345,8 @@ const AdvisorChat: React.FC = () => {
         </div>
 
         {/* Input bar */}
-        <div className="border-t border-border-subtle bg-surface/90 backdrop-blur-md">
-          <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="border-t border-border-subtle bg-surface/90 backdrop-blur-md pb-[5.5rem]">
+          <div className="max-w-4xl mx-auto px-6 pt-4 pb-2">
             <div className="flex items-center gap-3 bg-bg-base border border-border-subtle rounded-2xl px-4 py-1 focus-within:border-brand-500/40 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all shadow-sm">
               <button
                 className="p-2 text-text-muted hover:text-brand-600 transition-colors flex-shrink-0"
