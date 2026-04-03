@@ -163,7 +163,7 @@ const StudentDashboard: React.FC = () => {
   });
 
   return (
-    <div className="p-6 pb-32 md:p-10 md:pb-36 max-w-7xl mx-auto flex flex-col gap-6 animate-in fade-in duration-500 text-text-primary">
+    <div className="p-6 pb-32 md:p-10 md:pb-36 xl:px-12 w-full max-w-[1600px] mx-auto flex flex-col gap-6 animate-in fade-in duration-500 text-text-primary">
 
       {/* Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

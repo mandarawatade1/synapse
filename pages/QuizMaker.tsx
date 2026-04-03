@@ -288,7 +288,7 @@ const QuizMaker: React.FC = () => {
   const scorePercent = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-6 md:p-10 xl:px-12 w-full max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
