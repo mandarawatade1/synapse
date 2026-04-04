@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, Youtube, ChevronDown, Sun, Moon } from 'lucide-react';
+import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft, Youtube, ChevronDown, ChevronRight, Sun, Moon } from 'lucide-react';
 import { UserProfile } from './types';
 import { auth, googleProvider, getUserProfile, saveUserProfile } from './src/services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -64,7 +64,7 @@ const GlobalUIOverlays = ({ isInitialLoading }: { isInitialLoading?: boolean }) 
     { label: 'Notes', icon: <BookOpen size={20} className="text-blue-500 dark:text-blue-400" />, className: "hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] dark:hover:shadow-[0_0_15px_rgba(96,165,250,0.3)] hover:border-blue-500/30 transition-shadow transition-colors", onClick: () => navigate('/notes') },
     { label: 'Quiz Maker', icon: <Brain size={20} className="text-amber-500 dark:text-amber-400" />, className: "hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] dark:hover:shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:border-amber-500/30 transition-shadow transition-colors", onClick: () => navigate('/quiz') },
     { label: 'Flashcards', icon: <Sparkles size={20} className="text-pink-500 dark:text-pink-400" />, className: "hover:shadow-[0_0_15px_rgba(236,72,153,0.3)] dark:hover:shadow-[0_0_15px_rgba(244,114,182,0.3)] hover:border-pink-500/30 transition-shadow transition-colors", onClick: () => navigate('/flashcards') },
-    { label: 'Timetable', icon: <CalendarDays size={20} className="text-emerald-500 dark:text-emerald-400" />, className: "hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] dark:hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] hover:border-emerald-500/30 transition-shadow transition-colors", onClick: () => navigate('/timetable') },
+    { label: 'Timetable', icon: <ChevronRight size={20} className="text-brand-500 dark:text-brand-400" />, className: "hover:shadow-[0_0_15px_rgba(139,92,246,0.3)] dark:hover:shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:border-brand-500/30 transition-shadow transition-colors", onClick: () => navigate('/timetable') },
     { label: 'All Tools', icon: <Settings size={20} className="text-slate-500 dark:text-slate-400" />, className: "hover:shadow-[0_0_15px_rgba(100,116,139,0.3)] dark:hover:shadow-[0_0_15px_rgba(148,163,184,0.3)] hover:border-slate-500/30 transition-shadow transition-colors", onClick: () => navigate('/tools') },
   ];
 
@@ -214,7 +214,6 @@ const App: React.FC = () => {
                   <Route path="/transcript" element={<ProtectedRoute><TranscriptGenerator /></ProtectedRoute>} />
                   <Route path="/video-transcript" element={<ProtectedRoute><VideoTranscriptGenerator /></ProtectedRoute>} />
                   <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
-                  <Route path="/timer" element={<ProtectedRoute><PomodoroTimer /></ProtectedRoute>} />
                   <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
                   <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
                   <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
