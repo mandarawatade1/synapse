@@ -124,9 +124,11 @@ const NotesManager: React.FC = () => {
           </h1>
           <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Paste or upload notes to get AI-powered summaries, key points, and exam questions.</p>
         </div>
-        <button onClick={() => setShowLibrary(!showLibrary)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-          <BookOpen size={16} /> Library ({notes.length})
-        </button>
+        <div className="flex items-center gap-3 md:pr-24">
+          <button onClick={() => setShowLibrary(!showLibrary)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+            <BookOpen size={16} /> Library ({notes.length})
+          </button>
+        </div>
       </header>
 
       {/* Library Panel */}

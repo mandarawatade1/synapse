@@ -133,6 +133,7 @@ const MainContent = () => {
         <Route path="/video-transcript" element={<ProtectedRoute><VideoTranscriptGenerator /></ProtectedRoute>} />
         <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
         <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+        <Route path="/timer" element={<ProtectedRoute><PomodoroTimer /></ProtectedRoute>} />
         <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
         <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
         <Route path="/tools" element={<ProtectedRoute><AllTools /></ProtectedRoute>} />

@@ -181,7 +181,7 @@ const ResumeBuilder: React.FC = () => {
             Upload, Analyze, and Chat with your Resume to beat the ATS.
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 md:pr-32">
           <button
             onClick={runFullAnalysis}
             disabled={loading}
