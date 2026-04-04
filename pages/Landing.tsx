@@ -8,32 +8,49 @@ import {
   Sparkles,
   Shield,
   Menu,
-  X
+  X,
+  Sun,
+  Moon
 } from 'lucide-react';
 import Ballpit from '../src/components/Ballpit';
 import { motion } from 'framer-motion';
 import VariableProximity from '../src/components/VariableProximity';
 import TextType from '../src/components/TextType';
 import StaggeredMenu from '../src/components/StaggeredMenu';
+import { useTheme } from '../App';
 
 const Landing: React.FC = () => {
+  const { isDark, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="bg-bg-base transition-colors">
+    <div className="bg-bg-base transition-colors min-h-screen">
 
       {/* Separate Logo Container */}
       <div className="absolute top-0 inset-x-0 z-[60] pointer-events-none">
-        <div className="container mx-auto px-6 h-28 flex items-center pointer-events-auto">
-          <Link to="/" className="group flex items-center gap-3">
-            <div className="p-2 bg-surface/40 backdrop-blur-md rounded-xl border border-border-subtle shadow-sm group-hover:scale-110 transition-transform duration-300">
-              <img src="/logo.png" className="w-8 h-8 drop-shadow-md" alt="Synapse" />
-            </div>
-            <span className="text-2xl font-bold text-text-primary font-logo drop-shadow-sm group-hover:text-brand-400 transition-colors duration-300">
-              Synapse
-            </span>
-          </Link>
+        <div className="container mx-auto px-6 h-28 flex items-center justify-between pointer-events-auto">
+          <div className="flex items-center gap-6">
+            <Link to="/" className="group flex items-center gap-3">
+              <div className="p-2 bg-surface/40 backdrop-blur-md rounded-xl border border-border-subtle shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <img src="/logo.png" className="w-8 h-8 drop-shadow-md" alt="Synapse" />
+              </div>
+              <span className="text-2xl font-bold text-text-primary font-logo drop-shadow-sm group-hover:text-brand-400 transition-colors duration-300">
+                Synapse
+              </span>
+            </Link>
+
+            <div className="h-8 w-px bg-border-subtle opacity-20 mx-1 hidden sm:block" />
+
+            {/* Theme Toggle Button - Moved to left to avoid menu interference */}
+            <button
+              onClick={toggleTheme}
+              className="p-3 bg-surface/40 backdrop-blur-md border border-border-subtle rounded-xl text-text-primary hover:text-brand-500 hover:border-brand-500/30 transition-all duration-300 shadow-sm"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -413,16 +430,97 @@ const Landing: React.FC = () => {
       </section>
 
 
-      {/* FOOTER */}
-      <footer className="py-20 border-t border-border-subtle">
-        <div className="container mx-auto px-6 text-center">
+      {/* DETAILED FOOTER */}
+      <footer className="relative pt-16 pb-8 overflow-hidden bg-surface/30 border-t border-border-subtle">
+        {/* Decorative background glow */}
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            {/* Brand Section */}
+            <div className="space-y-6">
+              <Link to="/" className="flex items-center gap-3">
+                <div className="p-2 bg-bg-base/80 backdrop-blur-md rounded-xl border border-border-subtle shadow-sm">
+                  <img src="/logo.png" className="w-6 h-6" alt="Synapse" />
+                </div>
+                <span className="text-xl font-bold text-text-primary font-logo">Synapse</span>
+              </Link>
+              <p className="text-text-secondary text-sm leading-relaxed max-w-xs transition-opacity hover:opacity-100 opacity-80">
+                Elevating academic potential through intelligent AI assistance. Study smarter, retain more, and achieve your goals.
+              </p>
+              <div className="flex gap-4">
+                {['Twitter', 'GitHub', 'LinkedIn'].map((social) => (
+                  <a key={social} href="#" className="w-10 h-10 rounded-xl bg-bg-base border border-border-subtle flex items-center justify-center text-text-muted hover:text-brand-500 hover:border-brand-500/30 hover:scale-110 transition-all duration-300">
+                    <span className="sr-only">{social}</span>
+                    <div className="w-5 h-5 bg-current mask-icon" style={{ maskImage: `url(/icons/${social.toLowerCase()}.svg)` }} />
+                  </a>
+                ))}
+              </div>
+            </div>
 
-          <img src="/logo.png" className="w-10 mx-auto mb-6" />
+            {/* Product Links */}
+            <div>
+              <h4 className="text-sm font-black uppercase tracking-[0.2em] text-text-primary mb-8">Product</h4>
+              <ul className="space-y-4">
+                {['AI Quiz Maker', 'Notes Summarizer', 'Performance Tracker', 'Exam Planner', 'Advisor Chat'].map((item) => (
+                  <li key={item}>
+                    <Link to="/login" className="text-text-secondary hover:text-brand-400 text-sm font-medium transition-colors">
+                      {item}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <p className="text-text-secondary">
-            © 2026 Synapse — Study smarter, not harder.
-          </p>
+            {/* Resources Links */}
+            <div>
+              <h4 className="text-sm font-black uppercase tracking-[0.2em] text-text-primary mb-8">Resources</h4>
+              <ul className="space-y-4">
+                {['Documentation', 'Study Tips', 'API Tokens', 'Community', 'Status'].map((item) => (
+                  <li key={item}>
+                    <a href="#" className="text-text-secondary hover:text-brand-400 text-sm font-medium transition-colors">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
+            {/* PCE Credit Section */}
+            <div className="lg:pl-8 border-l-0 lg:border-l border-border-subtle">
+              <h4 className="text-sm font-black uppercase tracking-[0.2em] text-text-primary mb-8">Development</h4>
+              <div className="p-6 rounded-2xl bg-bg-base border border-border-subtle space-y-4">
+                <p className="text-xs text-text-secondary font-medium leading-relaxed">
+                  Developed as part of academic learning and exploration at:
+                </p>
+                <a 
+                  href="https://www.pce.ac.in/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group block"
+                >
+                  <p className="text-sm font-black text-text-primary group-hover:text-brand-500 transition-colors">
+                    Pillai College of Engineering (PCE)
+                  </p>
+                  <div className="flex items-center gap-2 mt-2 text-[10px] font-bold text-brand-500 uppercase tracking-widest group-hover:gap-3 transition-all">
+                    Visit Website <ArrowRight size={12} />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-border-subtle flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-text-muted text-xs font-medium">
+              © 2026 Synapse AI. All rights reserved. Built with ❤️ for students globally.
+            </p>
+            <div className="flex gap-8">
+              <a href="#" className="text-text-muted hover:text-text-primary text-[10px] font-black uppercase tracking-widest transition-colors">Privacy Policy</a>
+              <a href="#" className="text-text-muted hover:text-text-primary text-[10px] font-black uppercase tracking-widest transition-colors">Terms of Service</a>
+              <a href="#" className="text-text-muted hover:text-text-primary text-[10px] font-black uppercase tracking-widest transition-colors">Cookies</a>
+            </div>
+          </div>
         </div>
       </footer>
 
