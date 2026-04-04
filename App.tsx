@@ -32,6 +32,7 @@ import Flashcards from './pages/Flashcards';
 import AllTools from './pages/AllTools';
 import Dock from './src/components/Dock';
 import DashboardHeader from './src/components/DashboardHeader';
+import DockOnboarding from './src/components/DockOnboarding';
 
 
 // Contexts
@@ -71,6 +72,7 @@ const GlobalUIOverlays = ({ isInitialLoading }: { isInitialLoading?: boolean }) 
   return (
     <>
       <DashboardHeader />
+      <DockOnboarding />
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] w-full md:w-[60%] h-12 md:h-8 group hover:h-40 flex justify-center pointer-events-auto">
         {/* Subtle iOS-like home indicator—pulsing for extra discoverability on desktop */}
         <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1.5 rounded-full border border-border-subtle bg-surface/80 backdrop-blur-md group-hover:opacity-0 transition-opacity duration-300 shadow-[0_0_10px_rgba(139,92,246,0.3)] animate-pulse"></div>
