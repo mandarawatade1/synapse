@@ -454,7 +454,8 @@ export const generateQuiz = async (
     contents: `You are an expert quiz generator. Generate exactly ${count} multiple-choice questions about "${topic}" ${diffInstruction}.${contextPart}
 
     Each question MUST have exactly 4 options. The "correct" field is the 0-based index of the correct option.
-    The "explanation" field should explain WHY the correct answer is right in 1-2 sentences.`,
+    The "explanation" field should explain WHY the correct answer is right in 1-2 sentences.
+    The "category" field should be a short 1-2 word tag for the specific sub-topic of the question (e.g. "Syntax", "Hooks", "Async").`,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -466,9 +467,10 @@ export const generateQuiz = async (
             question: { type: Type.STRING },
             options: { type: Type.ARRAY, items: { type: Type.STRING } },
             correct: { type: Type.NUMBER },
-            explanation: { type: Type.STRING }
+            explanation: { type: Type.STRING },
+            category: { type: Type.STRING }
           },
-          required: ["id", "question", "options", "correct", "explanation"]
+          required: ["id", "question", "options", "correct", "explanation", "category"]
         }
       }
     }
