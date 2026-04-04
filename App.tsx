@@ -107,6 +107,41 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const MainContent = () => {
+  const location = useLocation();
+  const isMarketingPage = ['/', '/login', '/profile-setup'].includes(location.pathname);
+
+  return (
+    <main 
+      className={`flex-1 w-full bg-bg-base text-text-primary overflow-auto scroll-smooth ${isMarketingPage ? 'pb-0' : 'pb-32'}`} 
+      style={{ backgroundColor: 'var(--bg-base)' }}
+    >
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile-setup" element={<ProfileSetup />} />
+        <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+        <Route path="/internships" element={<ProtectedRoute><InternshipPortal /></ProtectedRoute>} />
+        <Route path="/advisor" element={<ProtectedRoute><AdvisorChat /></ProtectedRoute>} />
+        <Route path="/planner" element={<ProtectedRoute><PrepPlanner /></ProtectedRoute>} />
+        <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
+        <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
+        <Route path="/quiz" element={<ProtectedRoute><QuizMaker /></ProtectedRoute>} />
+        <Route path="/performance" element={<ProtectedRoute><PerformanceAnalyzer /></ProtectedRoute>} />
+        <Route path="/notes" element={<ProtectedRoute><NotesManager /></ProtectedRoute>} />
+        <Route path="/transcript" element={<ProtectedRoute><TranscriptGenerator /></ProtectedRoute>} />
+        <Route path="/video-transcript" element={<ProtectedRoute><VideoTranscriptGenerator /></ProtectedRoute>} />
+        <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
+        <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+        <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
+        <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
+        <Route path="/tools" element={<ProtectedRoute><AllTools /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
+      </Routes>
+    </main>
+  );
+};
+
 const App: React.FC = () => {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme-preference');
@@ -135,6 +170,11 @@ const App: React.FC = () => {
   useEffect(() => {
     // Determine a minimum time to show the loading screen (e.g. 2.2s)
     const minLoadTime = new Promise(resolve => setTimeout(resolve, 2200));
+    
+    // Failsafe: Hide loading screen after 5 seconds regardless of what happens
+    const safetyTimeout = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 5000);
 
     // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -159,9 +199,20 @@ const App: React.FC = () => {
       }
       
       // Hide loading screen after minimum display time AND Firebase check resolves
-      minLoadTime.then(() => setIsInitialLoading(false));
+      minLoadTime.then(() => {
+        setIsInitialLoading(false);
+        clearTimeout(safetyTimeout);
+      });
+    }, (error) => {
+      console.error("Auth error", error);
+      setIsInitialLoading(false);
+      clearTimeout(safetyTimeout);
     });
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribe();
+      clearTimeout(safetyTimeout);
+    };
   }, []);
 
   const login = async (u?: UserProfile) => {
@@ -199,30 +250,7 @@ const App: React.FC = () => {
           <Router>
             <div className="relative min-h-screen transition-colors bg-bg-base overflow-x-hidden flex flex-col">
               <GlobalUIOverlays isInitialLoading={isInitialLoading} />
-              <main className="flex-1 w-full bg-bg-base text-text-primary overflow-auto scroll-smooth pb-32" style={{ backgroundColor: 'var(--bg-base)' }}>
-                <Routes>
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/profile-setup" element={<ProfileSetup />} />
-                  <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
-                  <Route path="/internships" element={<ProtectedRoute><InternshipPortal /></ProtectedRoute>} />
-                  <Route path="/advisor" element={<ProtectedRoute><AdvisorChat /></ProtectedRoute>} />
-                  <Route path="/planner" element={<ProtectedRoute><PrepPlanner /></ProtectedRoute>} />
-                  <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
-                  <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
-                  <Route path="/quiz" element={<ProtectedRoute><QuizMaker /></ProtectedRoute>} />
-                  <Route path="/performance" element={<ProtectedRoute><PerformanceAnalyzer /></ProtectedRoute>} />
-                  <Route path="/notes" element={<ProtectedRoute><NotesManager /></ProtectedRoute>} />
-                  <Route path="/transcript" element={<ProtectedRoute><TranscriptGenerator /></ProtectedRoute>} />
-                  <Route path="/video-transcript" element={<ProtectedRoute><VideoTranscriptGenerator /></ProtectedRoute>} />
-                  <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
-                  <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
-                  <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
-                  <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
-                  <Route path="/tools" element={<ProtectedRoute><AllTools /></ProtectedRoute>} />
-                  <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
-                </Routes>
-              </main>
+              <MainContent key="main-app-content" />
             </div>
           </Router>
       </ThemeContext.Provider>
