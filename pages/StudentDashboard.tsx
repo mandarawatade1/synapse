@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Brain, BookOpen, AudioLines, TrendingUp, ArrowRight, Sparkles, FileText, Clock, Target, Flame, Trophy, Zap, ChevronRight, CalendarDays, Plus, Trash2, Youtube } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../App';
 import { auth } from '../src/services/firebase';
 import { getQuizHistory, getPerformanceHistory, getNotes, getTranscripts } from '../src/services/firebase';
 import { QuizSession, PerformanceReport, SavedNote, SavedTranscript } from '../types';
 
 const StudentDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useUser();
   const [quizzes, setQuizzes] = useState<QuizSession[]>([]);
   const [reports, setReports] = useState<PerformanceReport[]>([]);
@@ -258,7 +259,17 @@ const StudentDashboard: React.FC = () => {
                       <span className={`text-[10px] font-black px-2 py-0.5 rounded ${urgent ? 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20' : 'bg-text-primary/5 text-text-secondary'}`}>{daysText}</span>
                       <span className="text-sm font-bold text-text-primary">{ex.subject}</span>
                     </div>
-                    <button onClick={() => removeExam(ex.id)} className="p-1 text-text-muted opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"><Trash2 size={12} /></button>
+                    <div className="flex items-center gap-1">
+                      <button 
+                        onClick={() => navigate('/timetable', { state: { subject: ex.subject, date: ex.date } })}
+                        className="p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/40 rounded-lg transition-all flex items-center gap-1 group/btn"
+                        title="Generate Time Table"
+                      >
+                        <Zap size={14} className="group-hover/btn:scale-110" />
+                        <span className="text-[10px] font-black uppercase tracking-wider hidden group-hover/btn:inline-block">Plan</span>
+                      </button>
+                      <button onClick={() => removeExam(ex.id)} className="p-1 text-text-muted opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"><Trash2 size={12} /></button>
+                    </div>
                   </div>
                 );
               })}
