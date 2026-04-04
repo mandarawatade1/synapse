@@ -288,7 +288,7 @@ const QuizMaker: React.FC = () => {
   const scorePercent = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="p-6 md:p-10 xl:px-12 w-full max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -297,9 +297,11 @@ const QuizMaker: React.FC = () => {
           </h1>
           <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Generate quizzes on any topic with AI-powered questions.</p>
         </div>
-        <button onClick={() => setShowHistory(!showHistory)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-          <History size={16} /> History
-        </button>
+        <div className="flex items-center gap-3 md:pr-24">
+          <button onClick={() => setShowHistory(!showHistory)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+            <History size={16} /> History
+          </button>
+        </div>
       </header>
 
       {showHistory && (

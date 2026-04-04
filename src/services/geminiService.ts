@@ -780,6 +780,95 @@ Output JSON: { "feedback": "...", "score": 7, "confidenceScore": 8, "improvement
   return JSON.parse(aiResponse.text || '{"feedback": "Unable to analyze", "score": 5, "confidenceScore": 5, "improvement": "Try to be more specific."}');
 };
 
+export const generateStudySchedule = async (
+  subject: string,
+  deadline: string,
+  syllabus: string,
+  dailyHours: number
+): Promise<{
+  days: {
+    dayNumber: number;
+    date: string;
+    topics: { title: string; duration: string; priority: 'High' | 'Medium' | 'Low' }[];
+    isRestDay: boolean;
+    note?: string;
+  }[];
+  burnoutRisk: 'Low' | 'Medium' | 'High';
+  advice: string;
+}> => {
+  const prompt = `You are an expert academic strategist. Generate a realistic, "no burnout" study schedule for the subject: "${subject}".
+  
+  DEADLINE: ${deadline}
+  DAILY STUDY HOURS: ${dailyHours} hours
+  SYLLABUS/TOPICS:
+  ${syllabus}
+
+  RULES:
+  1. Be realistic. If there is too much to study for the given time, prioritize the most critical topics and leave a note.
+  2. Spacing Effect: Spread topics out.
+  3. No Burnout: If the schedule is longer than 5 days, include at least one rest day.
+  4. Output strictly in JSON according to the schema provided.
+  5. Times should be in 24h format for the date if needed, but for "date" just use "Day 1", "Day 2", etc. or actual dates if possible. Use "Day 1", "Day 2" format for simplicity in the 'date' field.
+
+  OUTPUT SCHEMA (JSON):
+  {
+    "days": [
+      {
+        "dayNumber": 1,
+        "date": "Day 1",
+        "topics": [{ "title": "Topic Name", "duration": "1.5h", "priority": "High" }],
+        "isRestDay": false,
+        "note": "Optional tip for the day"
+      }
+    ],
+    "burnoutRisk": "Low" | "Medium" | "High",
+    "advice": "Strategic advice for the overall timeline"
+  }`;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          days: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                dayNumber: { type: Type.NUMBER },
+                date: { type: Type.STRING },
+                topics: {
+                  type: Type.ARRAY,
+                  items: {
+                    type: Type.OBJECT,
+                    properties: {
+                      title: { type: Type.STRING },
+                      duration: { type: Type.STRING },
+                      priority: { type: Type.STRING, enum: ["High", "Medium", "Low"] }
+                    },
+                    required: ["title", "duration", "priority"]
+                  }
+                },
+                isRestDay: { type: Type.BOOLEAN },
+                note: { type: Type.STRING }
+              },
+              required: ["dayNumber", "date", "topics", "isRestDay"]
+            }
+          },
+          burnoutRisk: { type: Type.STRING, enum: ["Low", "Medium", "High"] },
+          advice: { type: Type.STRING }
+        },
+        required: ["days", "burnoutRisk", "advice"]
+      }
+    }
+  });
+
+  return JSON.parse(response.text || '{}');
+};
+
 export const generateOverallInterviewFeedback = async (
   role: string,
   difficulty: string,
