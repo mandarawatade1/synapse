@@ -9,13 +9,16 @@ export const generateDynamicRoadmap = async (
 ): Promise<RoadmapData> => {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are an expert curriculum architect. Generate a complete skill roadmap for the job role: "${role}", inspired by roadmap.sh.
+    contents: `You are an expert curriculum architect. Generate a highly detailed, comprehensive skill roadmap for the job role: "${role}", inspired by roadmap.sh. Break down the journey systematically from beginner to advanced.
 
     This roadmap must:
-    - Match industry expectations
-    - Be beginner-friendly but complete
-    - Follow clear learning progression
+    - Detail every aspect of the learning journey
+    - Break down complex topics into actionable steps
+    - Match industry expectations and modern tools
+    - Be beginner-friendly but meticulously complete
+    - Follow a clear, proven learning progression
     - Be structured as a visual roadmap / mind map
+    - Include 2-3 specific, high-quality recommended resources (with title, link, and type) for each step
     
     OUTPUT FORMAT (STRICT — JSON ONLY):
     {
@@ -31,7 +34,14 @@ export const generateDynamicRoadmap = async (
               "label": "How the Internet Works",
               "order": 1,
               "mandatory": true,
-              "description": "Short reasoning why this matters."
+              "description": "Detailed reasoning why this matters and what exactly to learn.",
+              "resources": [
+                {
+                  "title": "Crash Course Computer Science: The Internet",
+                  "link": "https://youtu.be/AEaKrq3SpW8",
+                  "type": "Video"
+                }
+              ]
             }
           ]
         }
@@ -69,7 +79,19 @@ export const generateDynamicRoadmap = async (
                       label: { type: Type.STRING },
                       order: { type: Type.NUMBER },
                       mandatory: { type: Type.BOOLEAN },
-                      description: { type: Type.STRING }
+                      description: { type: Type.STRING },
+                      resources: {
+                        type: Type.ARRAY,
+                        items: {
+                          type: Type.OBJECT,
+                          properties: {
+                            title: { type: Type.STRING },
+                            link: { type: Type.STRING },
+                            type: { type: Type.STRING }
+                          },
+                          required: ["title", "link", "type"]
+                        }
+                      }
                     },
                     required: ["id", "label", "order", "mandatory"]
                   }
