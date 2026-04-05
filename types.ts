@@ -53,12 +53,19 @@ export interface UserProfile {
   };
 }
 
+export interface Resource {
+  title: string;
+  link: string;
+  type: string;
+}
+
 export interface RoadmapNode {
   id: string;
   label: string;
   order: number;
   mandatory: boolean;
   description?: string; // Optional field for UI richness
+  resources?: Resource[];
 }
 
 export interface RoadmapSection {
